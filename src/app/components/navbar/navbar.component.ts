@@ -15,6 +15,8 @@ import Swal from "sweetalert2";
 import { MembreService } from "src/app/service/membre.service";
 import { SearchPanelComponent } from "src/app/pages/dialogs/search-panel/search-panel.component";
 import { WebSocketInvitationService } from "src/app/service/web-socket-invitation.service";
+import { AuthentificationService } from "src/app/service/authentification.service";
+import { ProjetServiceService } from "src/app/service/projet-service.service";
 
 export interface InvitationPanel{
   projet:Projet
@@ -53,6 +55,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private dialogInvitation: MatDialog,
     private dialogRecherche: MatDialog,
     private router: Router,
+    private authentificationService:AuthentificationService,
+    private projetService:ProjetServiceService
+
+
   ) {
     this.location = location;
     this.sidebarVisible = false;
@@ -73,12 +79,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
    role:String;
 
    ngOnInit(){
-    if(localStorage.getItem('role')=='membre'){
-      var roleString = localStorage?.getItem('role');
-      var roleObj = JSON.parse(roleString);
-      this.role = roleObj?.type;
+    if(this.authentificationService.getToken().roles.includes('chefProjet')){
+      this.role='chefProjet';
     }else{
-      this.role = localStorage.getItem('role');
+      const roleToken = this.authentificationService.getToken().roles as Role[]
+      this.role = roleToken.find(role =>
+         role.pk.membreId == this.membreService.getToken().membre.id
+         && role.pk.projetId == this.projetService.getProjetFromLocalStorage().id).type
+         console.log("wellllllltedd+",this.role);
+
     }
 
      if(localStorage.getItem('projet')){

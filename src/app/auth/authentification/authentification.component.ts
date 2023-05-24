@@ -63,9 +63,18 @@ export class AuthentificationComponent implements OnInit {
         const token = response.token;
         localStorage.setItem('token', token);
 
-        const { roles } = this.membreService.getToken();
+        const { roles } = this.chefProjetService.getToken();
+        const { chefProjet } = this.chefProjetService.getToken();
+        const { membre } = this.membreService.getToken();
+        console.log("Membre = ",membre);
+        console.log("Chef projet = ",chefProjet);
+        console.log('Role(s) = ',roles);
 
-        console.log('Liste des rôles:', roles);
+        if (roles.includes('chefProjet')) {
+          this.router.navigate(['liste-projet']);
+        } else {
+          this.router.navigate(['liste-projet-membre']);
+        }
       },
       (error) => {
       }

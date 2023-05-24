@@ -90,7 +90,7 @@ export class MembreService {
   }
 
   extractRolesFromToken(decodedToken: any): string[] {
-    const roles = decodedToken.roles || []; // Supposons que les rôles soient stockés dans le champ 'roles' du token
+    const roles = decodedToken.roles || [];
     return roles;
   }
 

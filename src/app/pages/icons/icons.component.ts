@@ -29,6 +29,9 @@ import { ProductBacklogService } from "src/app/service/product-backlog.service";
 import { Ticket } from "src/app/model/ticket";
 import Swal from "sweetalert2";
 import { ChefProjetServiceService } from "src/app/service/chef-projet-service.service";
+import { AuthentificationService } from "src/app/service/authentification.service";
+import { Role } from "src/app/model/role";
+import { ProjetServiceService } from "src/app/service/projet-service.service";
 
 @Component({
   selector: "app-icons",
@@ -76,7 +79,9 @@ export class IconsComponent implements OnInit {
     private sprintService:SprintService, private dialog: MatDialog,
     public dialogDetailSprint: MatDialog, private membreService:MembreService,
     private toastr: ToastrService, private snackBar: MatSnackBar,
-    private chefProjetService:ChefProjetServiceService) {}
+    private chefProjetService:ChefProjetServiceService,
+    private authentificationService:AuthentificationService,
+    private projetService:ProjetServiceService) {}
 
   sprints:Sprint[];
   histoireTicketsByMembreId:TicketHistoire[];
@@ -368,7 +373,16 @@ removeUserStoryFromProductBacklog(id: number) {
 
   role:String;
     ngOnInit(){
-      this.role = localStorage.getItem('role');
+      if(this.authentificationService.getToken().roles.includes('chefProjet')){
+        this.role='chefProjet';
+      }else{
+        const roleToken = this.authentificationService.getToken().roles as Role[]
+        this.role = roleToken.find(role =>
+           role.pk.membreId == this.membreService.getToken().membre.id
+           && role.pk.projetId == this.projetService.getProjetFromLocalStorage().id).type
+           console.log("wellllllltedd+",this.role);
+
+      }
 
       this.getHistoireTicketsByMembreId(this.membreService.getMembreFromToken().id);
       this.getHistoireTicketsByProductBacklogId(this.getProductBacklogByIdFromLocalStorage());
