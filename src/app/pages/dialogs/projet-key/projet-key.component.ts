@@ -8,6 +8,9 @@ import { Router } from '@angular/router';
 import { Membre } from 'src/app/model/membre';
 import { RoleService } from 'src/app/service/role.service';
 import { RolePk } from 'src/app/model/keys/role-pk';
+import { MembreService } from 'src/app/service/membre.service';
+import { ChefProjet } from 'src/app/model/chef-projet';
+import { ChefProjetServiceService } from 'src/app/service/chef-projet-service.service';
 
 @Component({
   selector: 'app-projet-key',
@@ -18,17 +21,19 @@ export class ProjetKeyComponent implements OnInit {
 
   cles :FormControl = new FormControl("",[Validators.required]);
   membre:Membre;
+  chefProjet:ChefProjet;
+
   constructor(
     private router:Router,
     public dialogRef: MatDialogRef<ProjetKeyComponent>,
     @Inject(MAT_DIALOG_DATA) public data:ClesProjet,
     private productBacklogService:ProductBacklogService,
-    private roleService:RoleService
+    private roleService:RoleService,
+    private membreService:MembreService
   ){}
 
   ngOnInit(): void {
-    if(localStorage.getItem("membre"))
-      this.membre = JSON.parse(localStorage.getItem("membre"));
+    this.membre = this.membreService.getMembreFromToken();
   }
 
   confirmer(){
@@ -57,8 +62,7 @@ export class ProjetKeyComponent implements OnInit {
             }
             this.roleService.afficherRole(pk).subscribe(
               data =>{
-                console.log(data);
-                localStorage.setItem("role",JSON.stringify(data));
+                localStorage.setItem("role", data.type);
               }
             )
           }

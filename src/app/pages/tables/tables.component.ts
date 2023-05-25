@@ -6,6 +6,7 @@ import { Dossier } from "src/app/model/dossier";
 import { Membre } from "src/app/model/membre";
 import { AntiVerusService } from "src/app/service/anti-verus.service";
 import { DossierService } from "src/app/service/dossier.service";
+import { MembreService } from "src/app/service/membre.service";
 import { WebSocketDossierService } from "src/app/service/web-socket-dossier.service";
 import Swal from "sweetalert2";
 
@@ -16,7 +17,6 @@ import Swal from "sweetalert2";
   styleUrls: ['./tables.component.scss'],
 })
 export class TablesComponent implements OnInit {
- 
   zip:JSZip=new JSZip();
   formData:FormData = new FormData();
   folderName:string;
@@ -27,7 +27,8 @@ export class TablesComponent implements OnInit {
     private dossierService:DossierService,
     private antiVerusService:AntiVerusService,
     private router: Router,
-    private webSocketService:WebSocketDossierService
+    private webSocketService:WebSocketDossierService,
+    private membreService:MembreService
   ) {
     this.webSocketService.messageHandlingAddDos(null).subscribe(
       message => {
@@ -39,15 +40,14 @@ export class TablesComponent implements OnInit {
       message => {
         console.log(message);
         if(message.supprimer && this.projetDos.find(dos => dos.id == message.supprimer.id) && message.supprimer.projetId == JSON.parse(localStorage.getItem('projet')).id )
-         this.projetDos.splice(this.projetDos.indexOf(this.projetDos.find(dos => dos.id == message.supprimer.id)),1) 
+         this.projetDos.splice(this.projetDos.indexOf(this.projetDos.find(dos => dos.id == message.supprimer.id)),1)
       }
     )
-    
+
   }
   membre:Membre
   ngOnInit() {
-    if(localStorage.getItem("membre"))
-      this.membre = JSON.parse(localStorage.getItem("membre"))
+    this.membre = this.membreService.getMembreFromToken();
     this.folderName = ""
     const projet = JSON.parse(localStorage.getItem('projet'))
     this.dossierService.recupererDossierDeProjet(projet.id).subscribe(
@@ -55,10 +55,10 @@ export class TablesComponent implements OnInit {
         if(data)
          this.projetDos = data
         console.log(data);
-        
+
       },
       error =>{
-        
+
       }
     )
   }
@@ -79,7 +79,6 @@ export class TablesComponent implements OnInit {
     }else{
       const folderNameDiv = document.getElementById("folderName");
       const folderDiv = document.getElementById("folder");
-  
       folderDiv.classList.add("has-files")
       folderNameDiv.innerHTML = "nom de dossier : "+this.folderName
       for(let file of files){
@@ -116,7 +115,7 @@ export class TablesComponent implements OnInit {
       /** appel au service Dossier */
       const dossier:Dossier = {
         projetId:JSON.parse(localStorage.getItem('projet')).id,
-        membreId:JSON.parse(localStorage.getItem('membre')).id,
+        membreId:this.membreService.getMembreFromToken().id,
         donnees:formData,
         nomDossier:this.folderName,
       }
@@ -127,7 +126,6 @@ export class TablesComponent implements OnInit {
             (message) => {
               // afficher le message reçu dans la console
               console.log(message);
-             
             },
             (err) => {
               console.error(err); // afficher les erreurs dans la console
@@ -141,7 +139,6 @@ export class TablesComponent implements OnInit {
           this.toastr.error("vous avez déjà inserer ce dossier")
         }
       )
-      
       /** end */
    })
   }
@@ -166,7 +163,7 @@ export class TablesComponent implements OnInit {
       if (result.isConfirmed) {
         this.dossierService.supprimerDos(dossier.id).subscribe(
           data => {
-            //this.projetDos.splice(this.projetDos.indexOf(this.projetDos.find(dos => dos.id == dossier.id)),1) 
+            //this.projetDos.splice(this.projetDos.indexOf(this.projetDos.find(dos => dos.id == dossier.id)),1)
             this.webSocketService.messageHandlingSupprimerDos(dossier).subscribe(
               message => {
                 console.log(message);
@@ -183,8 +180,8 @@ export class TablesComponent implements OnInit {
         )
       }
     })
-   
+
   }
 
- 
+
 }

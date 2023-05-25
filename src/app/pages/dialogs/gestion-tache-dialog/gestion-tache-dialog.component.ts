@@ -5,6 +5,7 @@ import { TicketTacheService } from 'src/app/service/ticket-tache.service';
 import Swal from 'sweetalert2';
 import { DialogGererDataTicketTache } from '../../map/map.component';
 import { Membre } from 'src/app/model/membre';
+import { MembreService } from 'src/app/service/membre.service';
 
 @Component({
   selector: 'app-gestion-tache-dialog',
@@ -15,14 +16,14 @@ export class GestionTacheDialogComponent implements OnInit {
 
   membre:Membre
   constructor(
+    private membreService:MembreService,
     public dialogRef: MatDialogRef<GestionTacheDialogComponent>,
     private ticketTacheService: TicketTacheService,
     private fb:FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: DialogGererDataTicketTache,
+    @Inject(MAT_DIALOG_DATA) public data: DialogGererDataTicketTache
   ){}
   ngOnInit(): void {
-    if(localStorage.getItem('membre'))
-     this.membre = JSON.parse(localStorage.getItem('membre'))
+    this.membre = this.membreService.getMembreFromToken();
     console.log(this.data.ticketTache);
     this.modifTicketForm = this.fb.group({
       id:this.data.ticketTache.id,
@@ -37,7 +38,6 @@ export class GestionTacheDialogComponent implements OnInit {
       dateFin:this.data.ticketTache.dateFin,
       ht:this.data.ticketTache.ht
     });
-    
   }
 
   openForm:boolean = false
@@ -47,6 +47,7 @@ export class GestionTacheDialogComponent implements OnInit {
     console.log(this.data.ticketTache);
     if(this.membre.id == this.data.ticketTache.membreId){
     this.data.ticketTache.etat = "terminé"
+    this.data.ticketTache.dateFin=new Date()
     this.ticketTacheService.modifierTicketTache(this.data.ticketTache).subscribe(
       data => {
         console.log("voici ticket retourner :",data);
@@ -61,7 +62,6 @@ export class GestionTacheDialogComponent implements OnInit {
           tt:data
       }
         this.dialogRef.close(terminerData);
-        
       }
     )
     }else{
@@ -71,7 +71,6 @@ export class GestionTacheDialogComponent implements OnInit {
         'error',
       )
     }
-    
   }
 
   modifierTache(){
@@ -113,13 +112,13 @@ export class GestionTacheDialogComponent implements OnInit {
             )
           }
         )
-        
+
       }
     });
-    
+
   }
 
-  supprimerTache(){ 
+  supprimerTache(){
     if(this.membre.id == this.data.ticketTache.membreId)
     Swal.fire({
       title: "vous êtes sûr de supprimer cette tâche : "+this.data.ticketTache.titre,
@@ -152,10 +151,10 @@ export class GestionTacheDialogComponent implements OnInit {
             this.dialogRef.close(modifData);
           }
         )
-        
+
       }
     });
-    
+
   }
 
   openFormFunction(){

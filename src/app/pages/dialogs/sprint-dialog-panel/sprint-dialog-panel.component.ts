@@ -14,6 +14,7 @@ import { DialogData } from '../../icons/icons.component';
 import { CorbeilleService } from 'src/app/service/corbeille.service';
 import { WebSocketTicketTacheService } from 'src/app/service/web-socket-ticket-tache.service';
 import { Membre } from 'src/app/model/membre';
+import { MembreService } from 'src/app/service/membre.service';
 
 
 
@@ -39,12 +40,12 @@ export class SprintDialogPanelComponent implements OnInit{
     private webSocketTache:WebSocketTicketTacheService,
     private ticketTacheService:TicketTacheService,
     private histoireTicketService:HistoireTicketService,
-    private sprintBacklogService:SprintBacklogService
+    private sprintBacklogService:SprintBacklogService,
+    private membreService:MembreService
     ){
       this.webSocketTache.messageHandlingAdd(null).subscribe(
         message =>{
           console.log(message);
-          
           if(message.subscribe && this.data.TicketHistoires.find(histoire => histoire.id == message.subscribe.ht.id)){
             this.ticketTacheList.push(message.subscribe);
           }
@@ -67,12 +68,16 @@ export class SprintDialogPanelComponent implements OnInit{
     }
 
     TicketTacheModif:FormGroup;
-    membre:Membre
+    membre:Membre;
+    role:String;
+
   ngOnInit(): void {
+    this.role = localStorage.getItem('role');
+
+
     console.log(this.data.sprint);
     console.log(this.data.TicketHistoires);
-    if(localStorage.getItem("membre"))
-      this.membre = JSON.parse(localStorage.getItem("membre"));
+    this.membre = this.membreService.getMembreFromToken();
     this.projet = JSON.parse(localStorage.getItem("projet"))
     this.TicketTacheModif = this.fb.group({
       id: ['', Validators.required],
@@ -216,7 +221,7 @@ export class SprintDialogPanelComponent implements OnInit{
 
   //ajouter une ticket tache dans le panel de detail sprint
   ajouterTicketTache(ht:TicketHistoire){
-    const membre = JSON.parse(localStorage?.getItem("membre"))
+    const membre = this.membreService.getMembreFromToken();
     console.log(this.ticketTacheForm.value)
     let ticketTache:TacheTicket = this.ticketTacheForm.value
     ticketTache.ht = ht
@@ -260,6 +265,9 @@ export class SprintDialogPanelComponent implements OnInit{
               }
             })
         else
+          ticketTache.dateLancement = ht.dateDebut;
+          ticketTache.dateFin = ht.dateFin;
+          ticketTache.etat = 'à faire';
           this.ticketTacheService.ajouterTicketTache(ticketTache).subscribe(
             data =>{
               console.log(data);
@@ -268,9 +276,9 @@ export class SprintDialogPanelComponent implements OnInit{
                   console.log("affecter : ",dataTicket);
                   this.webSocketTache.messageHandlingAdd(dataTicket).subscribe()
                   this.ajouterTick = false;
-                  this.ticketTacheForm.reset()    
+                  this.ticketTacheForm.reset()
                 })
-              
+
             },
             error => {
               Swal.fire(
@@ -287,7 +295,6 @@ export class SprintDialogPanelComponent implements OnInit{
   //supprimer une ticket tache dans le panel de details sprint
   supprimerTicketTache(i:number){
     console.log(this.ticketTacheList[i].id);
-    
     if(confirm('vous êtes sur de supprimer cette tâche !'))
       this.ticketTacheService.supprimerTicketTache(this.ticketTacheList[i].id).subscribe(
         data =>{
@@ -301,7 +308,6 @@ export class SprintDialogPanelComponent implements OnInit{
   //lancer le sprint et generer un sprintBacklog avec force
   lancerSprintForcer(){
     console.log(this.data.canStart);
-    
     if(
     this.data.sprint.etat != "en cours"
     && !this.data.canStart
@@ -348,7 +354,6 @@ export class SprintDialogPanelComponent implements OnInit{
 
   lancerSprint(){
     console.log(this.data.sprint);
-    
     this.data.sprint.etat = "en cours"
     this.data.sprint.productBacklogId = this.data.sprint.productBacklog.id
     this.sprintService.modifierSprint(this.data.sprint).subscribe(dataSprint =>{
@@ -359,6 +364,8 @@ export class SprintDialogPanelComponent implements OnInit{
       sprintBacklog.sprintId = this.data.sprint.id
       this.data.TicketHistoires.forEach(ht =>{
         ht.status = "EN_COURS"
+        ht.dateDebut = this.data.sprint.dateLancement
+        ht.dateFin = this.data.sprint.dateFin
         this.histoireTicketService.updateUserStory(ht.id,ht).subscribe(
           data =>{
             console.log(data);
@@ -378,6 +385,8 @@ export class SprintDialogPanelComponent implements OnInit{
                     this.ticketTacheList[j].sprintBacklogId = dataSpBacklog.id
                     this.ticketTacheList[j].etat = "à faire"
                     this.ticketTacheList[j].sprintBacklog = dataSpBacklog
+                    this.ticketTacheList[j].dateLancement = this.data.TicketHistoires[i].dateDebut
+                    this.ticketTacheList[j].dateFin = this.data.TicketHistoires[i].dateFin
                     this.ticketTacheService.modifierTicketTache(this.ticketTacheList[j]).subscribe(
                       ttData=>{
                         console.log(ttData);
@@ -438,7 +447,7 @@ export class SprintDialogPanelComponent implements OnInit{
 
   verifDate(){
     const aujourdhui = new Date()
-    this.data.sprint.dateLancement= new Date( this.data.sprint.dateLancement)    
+    this.data.sprint.dateLancement= new Date( this.data.sprint.dateLancement)
     return  this.data.sprint.dateLancement.getFullYear() === aujourdhui.getFullYear() &&
     this.data.sprint.dateLancement.getMonth() === aujourdhui.getMonth() &&
     this.data.sprint.dateLancement.getDate() === aujourdhui.getDate()

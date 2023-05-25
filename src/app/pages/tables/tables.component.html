@@ -3,9 +3,15 @@
   <div class=" row">
     <div class=" col-md-12">
       <div class=" card">
+<<<<<<< HEAD
         
         <div class=" card-body">
           
+=======
+
+        <div class=" card-body">
+
+>>>>>>> 01ae3c0a642b6fba05332d5f3ab37e757d77b607
           <!-- folder input-->
           <div class="file-upload" id="folder" style="cursor: pointer;">
             <br>
@@ -16,7 +22,11 @@
           </div>
 
           <!-- end -->
+<<<<<<< HEAD
           
+=======
+
+>>>>>>> 01ae3c0a642b6fba05332d5f3ab37e757d77b607
         </div>
       </div>
     </div>
@@ -33,13 +43,21 @@
           <mat-list style="margin-left: 3%; display: flex; flex-wrap: wrap;" class="col-lg-12 col-sm-12 col-md-12 col-xs-12" >
             <ng-container *ngIf="projetDos.length>0">
             <mat-list-item style="flex-basis: 25%;" *ngFor="let folder of projetDos;index as i">
+<<<<<<< HEAD
               
+=======
+
+>>>>>>> 01ae3c0a642b6fba05332d5f3ab37e757d77b607
               <mat-icon matListItemIcon style="cursor: pointer;" class="text-light">
                 <a href="data:application/octet-stream;base64,{{ folder.donnees }}" download="{{ folder.nomDossier }}.zip">
                 folder
                </a>
               </mat-icon>
+<<<<<<< HEAD
              
+=======
+
+>>>>>>> 01ae3c0a642b6fba05332d5f3ab37e757d77b607
               <div matListItemTitle class="folder-text ">
                 {{folder.nomDossier}}
                 <ng-container *ngIf="folder.membreId == membre?.id">
@@ -49,7 +67,11 @@
               </ng-container>
               </div>
               <div matListItemLine class="text-light" style="font-size:10px" [matTooltip]="'emetteur : '+folder.membre.email">*{{folder.membre.nom}}*</div>
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> 01ae3c0a642b6fba05332d5f3ab37e757d77b607
             </mat-list-item>
           </ng-container>
           </mat-list>

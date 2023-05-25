@@ -27,6 +27,11 @@ export class SprintService {
     return this.http.delete<Sprint>(`${url1}/`+id)
   }
 
+  getSprintById(id: number) {
+    return this.http.get<Sprint>(`${url1}/${id}`);
+  }
+
+
 
 
 }

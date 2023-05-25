@@ -60,20 +60,20 @@ export class DashboardComponent implements OnInit {
           const sprint = this.sprints[i];
 
           this.histoireTicketService.getHistoireTicketBySprintId(sprint?.id).subscribe((tickets: TicketHistoire[]) => {
+
             const labels = [];
             const data = [];
             let remainingEffort = sprint.velocite;
-            labels.push(new Date(sprint.dateLancement));
+            labels.push(new Date(sprint.dateLancement).setHours(0, 0, 0, 0));
             data.push(remainingEffort);
 
             for (let j = 0; j < tickets.length; j++) {
               remainingEffort -= tickets[j].effort;
-              console.log('Date fin ticket = ' + new Date(tickets[j].dateFin).toLocaleDateString());
-              labels.push(new Date(tickets[j].dateFin));
+              labels.push(new Date(tickets[j].dateFin).setHours(0, 0, 0, 0));
 
               data.push(remainingEffort);
             }
-            labels.push(new Date(sprint.dateFin));
+            labels.push(new Date(sprint.dateFin).setHours(0, 0, 0, 0));
             data.push(0);
 
             const chart = new Chart(`canvas-${sprint?.id}`, {
@@ -142,8 +142,6 @@ export class DashboardComponent implements OnInit {
       }
       }
       /** terminer sprint */
-      const role = JSON.parse(localStorage?.getItem("role"))
-       /**if(role.type=='dev team'){ */
             const sprintEnCours = sprints.find(sprint => sprint.etat == "en cours")
             if(sprintEnCours){
               sprintEnCours.productBacklogId = sprintEnCours.productBacklog.id
@@ -194,7 +192,6 @@ export class DashboardComponent implements OnInit {
                             )
                           }
                         });
-                        
                       }else{
                         sprintEnCours.etat = "termine"
                         this.sprintService.modifierSprint(sprintEnCours).subscribe(
@@ -223,14 +220,12 @@ export class DashboardComponent implements OnInit {
                 )
               }
             }
-        
-       
+
+
     //}
 
-      /** end */
+  }
 
-    }
-      
   );
 
     this.histoireTicketService.getListHistoireTicketByProductBacklog(this.productBacklogService.getProductBacklogByIdFromLocalStorage()).subscribe(
@@ -294,6 +289,15 @@ export class DashboardComponent implements OnInit {
 
   private generateIdealTrend(sprint: Sprint): any[] {
     const idealTrend = [];
+    const dateLancement = new Date(sprint.dateLancement);
+    const dateFin = new Date(sprint.dateFin);
+
+    dateLancement.setHours(0, 0, 0, 0); // Réinitialiser les heures, minutes et secondes à zéro
+    console.log('Date = '+dateLancement)
+    idealTrend.push({ x: dateLancement, y: sprint.velocite });
+
+    dateFin.setHours(0, 0, 0, 0); // Réinitialiser les heures, minutes et secondes à zéro
+    idealTrend.push({ x: dateFin, y: 0 });
     idealTrend.push({ x: sprint.dateLancement, y: sprint.velocite });
     idealTrend.push({ x: sprint.dateFin, y: 0 });
     return idealTrend;
@@ -419,7 +423,7 @@ export class DashboardComponent implements OnInit {
 
   verifDate(dateRec:Date){
     const aujourdhui = new Date()
-    dateRec= new Date(dateRec)    
+    dateRec= new Date(dateRec)
     return  dateRec.getFullYear() === aujourdhui.getFullYear() &&
     dateRec.getMonth() === aujourdhui.getMonth() &&
     dateRec.getDate() === aujourdhui.getDate()
@@ -432,7 +436,7 @@ export class DashboardComponent implements OnInit {
 
   sprintSuivant(liste:Sprint[],sprintActuelle:Sprint):Sprint{
     if(liste.indexOf(sprintActuelle) == liste.length - 1)
-      return null 
+      return null
     else
       return liste[liste.indexOf(sprintActuelle)+1]
   }

@@ -38,7 +38,6 @@ export class DossierService {
     )
 
   }
-  
 
   supprimerDos(id:number){
     return this.http.delete(`${URL}/`+id)

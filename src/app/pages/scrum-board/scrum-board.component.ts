@@ -8,6 +8,7 @@ import { TicketTacheService } from 'src/app/service/ticket-tache.service';
 import Sortable from 'sortablejs';
 import Swal from 'sweetalert2';
 import { Membre } from 'src/app/model/membre';
+import { MembreService } from 'src/app/service/membre.service';
 
 @Component({
   selector: 'app-scrum-board',
@@ -27,6 +28,7 @@ export class ScrumBoardComponent implements OnInit {
 
   constructor(private toastr: ToastrService, private ticketTacheService:TicketTacheService,
     private productBacklogService:ProductBacklogService, private sprintService:SprintService,
+    private membreService:MembreService
     ) {}
 
   ticketsTache: TacheTicket[]=[];
@@ -34,6 +36,9 @@ export class ScrumBoardComponent implements OnInit {
   movedElementId: string = '';
   etat:string;
   lastEtat:string;
+  selectedSprintId: number;
+  public searchMember: string;
+
 
   showNotification(from, align){
 
@@ -93,7 +98,19 @@ export class ScrumBoardComponent implements OnInit {
 ngOnInit() {
   this.sprintService.getListSprintsByProductBacklog(this.productBacklogService.getProductBacklogByIdFromLocalStorage()).subscribe(
     data => {
-      this.sprints = data ;
+      this.sprints = data;
+
+      // Recherche du sprint "en cours"
+      const sprintEnCours = this.sprints.find(sprint => sprint.etat === 'en cours');
+
+      // Si aucun sprint "en cours" n'est trouvé, sélectionner le premier sprint
+      if (sprintEnCours) {
+        this.selectedSprintId = sprintEnCours.id;
+        this.getTicketsTacheBySprint(this.selectedSprintId);
+      } else if (this.sprints.length > 0) {
+        this.selectedSprintId = this.sprints[0].id;
+        this.getTicketsTacheBySprint(this.selectedSprintId);
+      }
     }
   );
 }
@@ -108,6 +125,25 @@ getTicketsTacheBySprint(sprintId: number) {
     this.ticketsTache = null;
   }
 }
+
+filterTicketsTache() {
+  if (this.selectedSprintId) {
+    if (this.searchMember) {
+      // Filtrer les tickets tâche en fonction du membre saisi
+      this.ticketsTache = this.ticketsTache.filter(tache => {
+        // Comparer avec le membre du ticket tâche
+        return tache.membre && (tache.membre.nom.includes(this.searchMember) || tache.membre.prenom.includes(this.searchMember) || tache.membre.email.includes(this.searchMember));
+      });
+    } else {
+      // Aucun membre saisi, afficher toutes les tâches
+      this.getTicketsTacheBySprint(this.selectedSprintId);
+    }
+  }
+}
+
+
+
+
 
 ngAfterViewInit() {
   const cardBodies = document.querySelectorAll('.card-body');
@@ -125,7 +161,6 @@ ngAfterViewInit() {
   }
 
   onDrop(event: DragEvent, tache: any) {
-  
     const targetElement = event.target as Element;
     const containerElement = targetElement.closest('.card-body') as HTMLElement;
     const containerId = containerElement.getAttribute('id');
@@ -142,10 +177,13 @@ ngAfterViewInit() {
   }
 }
 
+
+
+
 onDragEnd(event:DragEvent,tache:TacheTicket){
   console.log(tache);
   if(tache.membreId==null){
-    
+
     this.toastr.error(`Cette ticket n'a pas de membre`);
     window.location.reload();
   }
@@ -168,8 +206,8 @@ prendreTicket(idTicketTache:number){
     allowEnterKey: false,
     focusConfirm: false
   }).then((result) => {
-    if (result.isConfirmed) {  
-      const membre = JSON.parse(localStorage.getItem('membre'))
+    if (result.isConfirmed) {
+      const membre = this.membreService.getMembreFromToken();
       this.ticketTacheService.affecterTicketAMembre(membre,idTicketTache).subscribe(
       dataTicket=>{
           this.ticketsTache.forEach(ticket=>{
@@ -187,18 +225,18 @@ prendreTicket(idTicketTache:number){
           })
       }
     )
-    
+
     }
-   }      
+   }
   );
 
-  
+
 }
 
 verifierPersPris(membre:Membre){
-  const prendre = "cette ticket est pris par "
-  if(JSON.parse(localStorage.getItem('membre')).id == membre.id)
-    this.toastr.success(`${prendre} Vous 	😀`);
+  const prendre = "Cette tâche est prise par "
+  if(this.membreService.getMembreFromToken().id == membre.id)
+    this.toastr.success(`${prendre} vous 😀`);
   else
     this.toastr.success(`${prendre} ${membre.email}`);
 }

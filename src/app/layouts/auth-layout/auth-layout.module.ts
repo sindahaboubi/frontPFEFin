@@ -6,7 +6,6 @@ import { AuthLayoutRoutes } from './auth-layout.routing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from "@angular/common/http";
 
-import { RtlComponent } from '../../pages/rtl/rtl.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 @NgModule({
   imports: [
@@ -18,7 +17,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     DragDropModule
   ],
   declarations: [
-    RtlComponent,
   ]
 })
 export class AuthLayoutModule { }

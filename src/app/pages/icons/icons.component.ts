@@ -28,6 +28,10 @@ import { AjouterSprintFormComponent } from "../ajouter-sprint-form/ajouter-sprin
 import { ProductBacklogService } from "src/app/service/product-backlog.service";
 import { Ticket } from "src/app/model/ticket";
 import Swal from "sweetalert2";
+import { ChefProjetServiceService } from "src/app/service/chef-projet-service.service";
+import { AuthentificationService } from "src/app/service/authentification.service";
+import { Role } from "src/app/model/role";
+import { ProjetServiceService } from "src/app/service/projet-service.service";
 
 @Component({
   selector: "app-icons",
@@ -63,7 +67,6 @@ import Swal from "sweetalert2";
         style({ transform: 'translateX(12%)' }),
         animate('0.6s ease-in-out', style({ transform: 'translateX(0%)' }))
       ]),
-      
     ])
   ]
 
@@ -75,7 +78,10 @@ export class IconsComponent implements OnInit {
     private productBacklogService:ProductBacklogService,
     private sprintService:SprintService, private dialog: MatDialog,
     public dialogDetailSprint: MatDialog, private membreService:MembreService,
-    private toastr: ToastrService, private snackBar: MatSnackBar) {}
+    private toastr: ToastrService, private snackBar: MatSnackBar,
+    private chefProjetService:ChefProjetServiceService,
+    private authentificationService:AuthentificationService,
+    private projetService:ProjetServiceService) {}
 
   sprints:Sprint[];
   histoireTicketsByMembreId:TicketHistoire[];
@@ -195,25 +201,26 @@ removeUserStoryFromProductBacklog(id: number) {
 
   //sprint details
   openDialogDetailsSprint(i:number,sp:Sprint) {
-    console.log(sp);
-    let test = this.checkStartOneSprint()
-    this.histoireTicketService.getHistoireTicketBySprintId(sp.id).subscribe(
-      data =>{
-        this.histoireTicketsSprint = data
-        const dialogRef = this.dialog.open(SprintDialogPanelComponent,{
-          width: '50%',
-          height:'80%',
-          data: {sprint:this.sprints[i],
-                TicketHistoires:this.histoireTicketsSprint,
-                canStart :test
-          }
-        });
+    if(this.role=='dev team' || this.role=='po'){
+      let test = this.checkStartOneSprint()
+      this.histoireTicketService.getHistoireTicketBySprintId(sp.id).subscribe(
+        data =>{
+          this.histoireTicketsSprint = data
+          const dialogRef = this.dialog.open(SprintDialogPanelComponent,{
+            width: '500px',
+            height:'600px',
+            data: {sprint:this.sprints[i],
+                  TicketHistoires:this.histoireTicketsSprint,
+                  canStart :test
+            }
+          });
 
-        dialogRef.afterClosed().subscribe(result => {
-          this.ngOnInit()
-        });
-      }
-    )
+          dialogRef.afterClosed().subscribe(result => {
+            this.ngOnInit()
+          });
+        }
+      )
+    }
   }
 
   getProductBacklogByIdFromLocalStorage(){
@@ -364,8 +371,20 @@ removeUserStoryFromProductBacklog(id: number) {
         );
   }
 
+  role:String;
     ngOnInit(){
-      this.getHistoireTicketsByMembreId(1);
+      if(this.authentificationService.getToken().roles.includes('chefProjet')){
+        this.role='chefProjet';
+      }else{
+        const roleToken = this.authentificationService.getToken().roles as Role[]
+        this.role = roleToken.find(role =>
+           role.pk.membreId == this.membreService.getToken().membre.id
+           && role.pk.projetId == this.projetService.getProjetFromLocalStorage().id).type
+           console.log("wellllllltedd+",this.role);
+
+      }
+
+      this.getHistoireTicketsByMembreId(this.membreService.getMembreFromToken().id);
       this.getHistoireTicketsByProductBacklogId(this.getProductBacklogByIdFromLocalStorage());
       this.sprintService.getListSprintsByProductBacklog(this.getProductBacklogByIdFromLocalStorage()).subscribe(
         data => {

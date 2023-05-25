@@ -6,6 +6,7 @@ import { RoleService } from 'src/app/service/role.service';
 import Swal from 'sweetalert2';
 import { ProjetKeyComponent } from '../dialogs/projet-key/projet-key.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MembreService } from 'src/app/service/membre.service';
 
 @Component({
   selector: 'app-select-projet-membre',
@@ -18,11 +19,12 @@ export class SelectProjetMembreComponent implements OnInit {
   constructor(
     private toastr: ToastrService,
     private keyMatDialogue:MatDialog,
-    private roleService:RoleService
+    private roleService:RoleService,
+    private membreService:MembreService
   ){}
   ngOnInit(): void {
-    const membre = JSON.parse(localStorage.getItem('membre'))
-    this.roleService.afficherListRoleParMembre(membre.id).subscribe(
+    // const membre = JSON.parse(localStorage.getItem('membre'))
+    this.roleService.afficherListRoleParMembre(this.membreService.getMembreFromToken().id).subscribe(
       data =>{
         this.roles = data.filter(role => this.verifDate(role.invitation.dateExpiration) )
         for(let role of data)
@@ -41,14 +43,14 @@ export class SelectProjetMembreComponent implements OnInit {
       }
     });
   }
-    
-  
+
+
 
   verifDate(dateRec:Date){
     const aujourdhui = new Date()
-    dateRec= new Date(dateRec)    
+    dateRec= new Date(dateRec)
     console.log(dateRec > aujourdhui);
-    
+
     return  dateRec > aujourdhui
   }
 
@@ -58,7 +60,7 @@ export class SelectProjetMembreComponent implements OnInit {
       data =>{
         console.log(data);
         this.roles.splice(this.roles.indexOf(role),1)
-        this.toastr.success("vous avez accepté l'invitation")     
+        this.toastr.success("vous avez accepté l'invitation")
       }
     )
   }
@@ -86,13 +88,13 @@ export class SelectProjetMembreComponent implements OnInit {
                 'Refus',
                 'Vous avez rejeté l offre',
                 'warning'
-              ) 
+              )
               this.roles.splice(this.roles.indexOf(role),1)
             }
-          )  
+          )
       }
     });
-   
+
 
   }
 

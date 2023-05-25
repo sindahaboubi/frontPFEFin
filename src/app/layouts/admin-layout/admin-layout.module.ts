@@ -40,11 +40,15 @@ import { ListMembreProjetComponent } from "src/app/pages/list-membre-projet/list
 
 import { InputChatComponent } from '../../pages/chatContenu/input-chat/input-chat.component';
 import { ContenaireMessageComponent } from '../../pages/chatContenu/contenaire-message/contenaire-message.component';
+//import { CalendarModule } from 'angular-calendar';
+import 'dhtmlx-gantt';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-
 import { CorbeilleComponent } from '../../pages/corbeille/corbeille.component';
+
+
 @NgModule({
   imports: [
+    //CalendarModule,
     CommonModule,
     RouterModule.forChild(AdminLayoutRoutes),
     FormsModule,
@@ -85,11 +89,10 @@ import { CorbeilleComponent } from '../../pages/corbeille/corbeille.component';
     MapComponent,
     CourbesComponent,
     HistoireMembreChartComponent,
-    StatCourbComponent, 
+    StatCourbComponent,
     ListMembreProjetComponent,
     InputChatComponent,
     ContenaireMessageComponent
-    // RtlComponent
   ]
 })
 

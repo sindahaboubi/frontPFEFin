@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Membre } from 'src/app/model/membre';
 import { TacheTicket } from 'src/app/model/tache-ticket';
 import { CorbeilleService } from 'src/app/service/corbeille.service';
+import { MembreService } from 'src/app/service/membre.service';
 import { SprintBacklogService } from 'src/app/service/sprint-backlog.service';
 import { SprintService } from 'src/app/service/sprint.service';
 import { WebSocketTicketTacheService } from 'src/app/service/web-socket-ticket-tache.service';
@@ -24,7 +25,8 @@ export class CorbeilleComponent implements OnInit {
   constructor(
     private corbeilleService: CorbeilleService,
     private sprintBacklogService:SprintBacklogService,
-    private webSocketTache:WebSocketTicketTacheService
+    private webSocketTache:WebSocketTicketTacheService,
+    private membreService:MembreService
   ){
 
     this.webSocketTache.messageHandlingAdd(null).subscribe(
@@ -38,12 +40,12 @@ export class CorbeilleComponent implements OnInit {
       }
     )
   }
- 
 
 
-  
+
+
   ngOnInit(): void {
-    this.membre = JSON.parse(localStorage.getItem('membre'))
+    this.membre = this.membreService.getMembreFromToken();
     const productBacklog = JSON.parse(localStorage.getItem('productBacklogCourant'))
     this.corbeilleService.getTacheCorbeilleByMembreId(this.membre.id).subscribe(
       dataCorbeille => {
@@ -57,12 +59,12 @@ export class CorbeilleComponent implements OnInit {
           }
         }
         console.log( this.tacheSprintMap );
-       
+
       }
     )
 
-  
-    
+
+
     this.chercher.valueChanges.subscribe(
       mot =>{
         const map =  new Map(this.tacheSprintMap)
@@ -77,7 +79,6 @@ export class CorbeilleComponent implements OnInit {
           this.tacheSprintMap = map
       }
     )
-    
   }
 
 
@@ -162,7 +163,6 @@ export class CorbeilleComponent implements OnInit {
         this.corbeilleService.deleteTacheFromCorbeille(id,"global").subscribe(
           data => {
             console.log(data)
-            
             this.tacheSprintMap
             .get(sprintId)
             ?.splice(this.tacheSprintMap.get(sprintId).indexOf(tache),1)
@@ -175,7 +175,6 @@ export class CorbeilleComponent implements OnInit {
         )
       }
     })
-    
   }
 
   recycler(sprintId:number,id:number){

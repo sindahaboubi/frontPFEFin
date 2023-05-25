@@ -99,12 +99,14 @@
               "node_modules/mdb-ui-kit/css/mdb.min.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/sweetalert2/dist/sweetalert2.min.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.css"
             ],
             "scripts": [
               "node_modules/fireworks-canvas/dist/fireworks.min.js",
               "node_modules/sweetalert2/dist/sweetalert2.min.js",
-              "node_modules/mdb-ui-kit/js/mdb.min.js"
+              "node_modules/mdb-ui-kit/js/mdb.min.js",
+              "node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.js"
             ],
             "assets": [
               "src/favicon.ico",

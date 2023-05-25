@@ -4,6 +4,8 @@ import { map, Observable } from 'rxjs';
 import { RolePk } from '../model/keys/role-pk';
 import { Role } from '../model/role';
 import { WebSocketInvitationService } from './web-socket-invitation.service';
+import { Membre } from '../model/membre';
+import jwt_decode from 'jwt-decode';
 
 const URL = "http://localhost:9999/invitation-service/roles"
 
@@ -16,11 +18,15 @@ export class RoleService {
   constructor(private http: HttpClient, private webSocket: WebSocketInvitationService) {
     this.webSocket.messageHandlingAddRole(null).subscribe(
       message => {
-        if (localStorage.getItem("membre")) {
-          const membre = JSON.parse(localStorage.getItem("membre"))
-          console.log(message.subscribe );
-          if (message.subscribe && membre.id == message.subscribe.pk.membreId)
-            this.roles.push(message.subscribe)
+        // if (localStorage.getItem("membre")) {
+        //   // const membre = JSON.parse(localStorage.getItem("membre"))
+        //   // console.log(message.subscribe );
+        //   // if (message.subscribe && membre.id == message.subscribe.pk.membreId)
+        //   //   this.roles.push(message.subscribe)
+        // }
+
+        if (message.subscribe && this.getMembreFromToken().id == message.subscribe.pk.membreId){
+          this.roles.push(message.subscribe);
         }
       }
     )
@@ -114,6 +120,30 @@ export class RoleService {
 
   getRoles(): Role[] {
     return this.roles;
+  }
+
+  decodeToken(token: string): any {
+    const decodedToken = jwt_decode(token);
+    return decodedToken;
+  }
+
+  getMembreFromToken(){
+    const token = localStorage.getItem('token');
+    const decodedToken = this.decodeToken(token);
+    const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+
+    const membre: Membre = {
+      id,
+      email,
+      nom: nom,
+      prenom:prenom,
+      adresse:adresse,
+      username:username,
+      telephone:telephone,
+      status:status,
+      dateInscription:dateInscription
+    };
+    return membre;
   }
 
 

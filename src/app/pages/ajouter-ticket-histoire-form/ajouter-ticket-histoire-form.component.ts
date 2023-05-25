@@ -4,6 +4,7 @@ import { Inject } from '@angular/core';
 import { HistoireTicketService } from 'src/app/service/histoire-ticket.service';
 import {FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
+import { MembreService } from 'src/app/service/membre.service';
 
 @Component({
   selector: 'app-ajouter-ticket-histoire-form',
@@ -23,7 +24,8 @@ export class AjouterTicketHistoireFormComponent {
 
   constructor(private fb: FormBuilder, private histoireTicketService:HistoireTicketService,
     public dialogRef: MatDialogRef<AjouterTicketHistoireFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private membreService:MembreService
   ) { }
 
   onNoClick(): void {
@@ -32,7 +34,7 @@ export class AjouterTicketHistoireFormComponent {
 
   onSave() {
     const formData = this.form.value;
-    formData.membreId=1;
+    formData.membreId=this.membreService.getMembreFromToken().id;
     this.histoireTicketService.addTicket(formData).subscribe(
       response => {
         console.log('Ticket histoire ajouté avec succès.');

@@ -19,6 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProjetKeyComponent } from '../dialogs/projet-key/projet-key.component';
 import { WebSocketInvitationService } from 'src/app/service/web-socket-invitation.service';
 import { ChefProjet } from 'src/app/model/chef-projet';
+import { ChefProjetServiceService } from 'src/app/service/chef-projet-service.service';
 
 export interface ExampleTab {
   label: string;
@@ -66,20 +67,15 @@ export class SelectProjetComponent implements OnInit {
   rolePkForm:FormGroup ;
   combinedForm:FormGroup;
 
-  clearLocalStorage() {
-    localStorage.clear();
-  }
-
   ngOnInit(): void {
-    if(localStorage.getItem("chef-projet"))
-      this.chefProjet = JSON.parse(localStorage.getItem("chef-projet"))
+
     this.rolePkForm = this.formBuilder2.group({
       membreId:null,
       projetId:[null,Validators.required]
     })
 
     this.invitationForm = this.formBuilder2.group({
-      chefProjetId:1,
+      chefProjetId:this.chefProjetService.getChefProjetFromToken().id,
       emailInvitee:["",[Validators.required]],
       membreId:null
     })
@@ -104,10 +100,10 @@ export class SelectProjetComponent implements OnInit {
       dateDebut: ['', Validators.required],
       dateFin: ['', Validators.required],
       cles: ['', Validators.required],
-      chefProjetId:1
+      chefProjetId:this.chefProjetService.getChefProjetFromToken().id
     });
     /*   liste des projet d'un chef de projet   */
-    this.projetService.getListProjetChefProjet(1).subscribe(
+    this.projetService.getListProjetChefProjet(this.chefProjetService.getChefProjetFromToken().id).subscribe(
       data => {
         this.projets = data ;
       }
@@ -159,7 +155,8 @@ export class SelectProjetComponent implements OnInit {
               private membreService: MembreService,
               private webSocketService:WebSocketInvitationService,
               private productBacklogService:ProductBacklogService,
-              private router: Router) {
+              private router: Router,
+              private chefProjetService:ChefProjetServiceService) {
 
     this.asyncTabs = new Observable((observer: Observer<ExampleTab[]>) => {
       /*   les type des action gerer par se composant :: les sliders   */
@@ -172,13 +169,10 @@ export class SelectProjetComponent implements OnInit {
       }, 1000);
     });
 
-    
-
   }
 
 /*   un seul projet peut etre gerer en temps real    */
   cocherProjet(index:number){
-
     this.valid = !this.valid;
     this.projets[index].checked  = !this.projets[index].checked;
   }
@@ -192,7 +186,6 @@ export class SelectProjetComponent implements OnInit {
         projet:this.projets[index]
       }
     });
-    
   }
 
   /*   annuler* ou gerer  */
@@ -208,7 +201,7 @@ onSubmit() {
     projet => {
       this.projet = projet;
       localStorage.setItem('projet', JSON.stringify(this.projet));
-      this.projets.push(projet) 
+      this.projets.push(projet)
       this.toastr.success(`Projet ${projet.nom} ajouter avec succés`);
       this.step = 0
       const productBacklog: ProductBacklog = new ProductBacklog();
@@ -230,7 +223,6 @@ onSubmit() {
 
 /** passer d un expansion a un autre */
 step = 0;
-
   setStep(index: number) {
     this.step = index;
   }
@@ -267,11 +259,11 @@ step = 0;
       projet:projetChoisis
     }
     /** a modifier apres l'auth */
-    request.invitation.chefProjetId = 1;
+    request.invitation.chefProjetId = this.chefProjetService.getChefProjetFromToken().id;
     /** end */
     this.invitationService.envoyerInvitation(request).subscribe(
       data => {
-        this.roleForm.get('invitation').setValue(data) 
+        this.roleForm.get('invitation').setValue(data)
         console.log( this.roleForm.get('invitation').value);
         let role:Role = this.roleForm.value
         role.pk.membreId = data.membreId
@@ -279,7 +271,6 @@ step = 0;
 
         this.roleService.ajouterRole(role).subscribe(
           data => {
-           
             console.log("role : "+data);
             this.invitationForm.reset();
             this.rolePkForm.reset();
@@ -306,7 +297,6 @@ step = 0;
       'Invitation Envoiyée',
       'success',
     )
-
   }
 
   listNewMembre:Membre[]=[]
@@ -316,12 +306,10 @@ step = 0;
     this.invitationForm.patchValue({ emailInvitee: "" });
     this.listNewMembre =[]
     this.invitationForm.get('emailInvitee').setValidators([Validators.required,emailValidator])
-
     const projetId = this.rolePkForm.get('projetId').value
     this.membreService.afficherTousMembres().subscribe(
       data => {
         /** injection validateur membre de email existe dans la base */
-
         /** end */
         this.roleService.afficherListRoleParProjet(projetId).subscribe(
           dataRoles => {

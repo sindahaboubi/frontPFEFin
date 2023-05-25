@@ -22,11 +22,11 @@ $gray-500: #adb5bd !default;
 $gray-600: #6c757d !default;   // Line footer color
 $gray-700: #525f7f !default;   // Line p color
 $gray-800: #32325d !default;   // Line heading color
-$gray-900: #212529 !default;
-$link-disabled:              #666666 !default;
+$gray-900: #4076ac !default;
+$link-disabled:              #fff3f3 !default;
 $transparent-bg:             transparent !default;
 $light-bg:                   #f5f6fa !default;
-$dark-background:            #555555 !default;
+$dark-background:            #e0c6c6 !default;
 
 
 $grays: () !default;
@@ -108,16 +108,16 @@ $black:         #222a42 !default;
 
 
 // gradient
-$default-states:       #263148 !default;
+$default-states:       #0e53f5 !default;
 $primary-states:       #ba54f5 !default;
 $success-states:       #0098f0 !default;
 $info-states:          #3358f4 !default;
 $warning-states:       #ff6491 !default;
 $danger-states:        #ec250d !default;
-$black-states:         #1d253b !default;
+$black-states:         #4769c7 !default;
 
-$background-black:           #1e1e2f !default;
-$background-states-black:    #1e1e24 !default;
+$background-black:           #e6e6e6 !default;
+$background-states-black:    #dbdbdb !default;
 
 // opacity
 $default-opacity:      rgba(182, 182, 182, .6) !default;
@@ -250,12 +250,6 @@ $section-colors: map-merge((
   "darker":       $darker
 ), $section-colors);
 
-// Links
-
-$link-color:                $primary !default;
-$link-decoration:           none !default;
-$link-hover-color:          darken($link-color, 15%);
-$link-hover-decoration:     none !default;
 
 // Grid breakpoints
 
@@ -269,12 +263,6 @@ $grid-breakpoints: (
 
 @include _assert-ascending($grid-breakpoints, "$grid-breakpoints");
 @include _assert-starts-at-zero($grid-breakpoints);
-
-
-// Grid containers
-//
-// Define the maximum width of `.container` for different screen sizes.
-
 
 // Spacing
 
@@ -320,11 +308,6 @@ $sizes: map-merge((
   100: 100%
 ), $sizes);
 
-// Components
-
-$shape-height-xl:              1.5 !default;
-$shape-height-lg:              1.5 !default;
-$shape-height-sm:              1.5 !default;
 
 // border
 $none:                       0   !default;
@@ -690,16 +673,6 @@ $noui-handle-border-radius:       100% !default;
 $noui-origin-border-radius:       2px !default;
 
 
-// Dropdown
-
-$dropdown-bg:                       $white !default;
-$dropdown-border-width:             0 !default;
-$dropdown-border-color:             rgba($black, .15);
-$dropdown-border-radius:            $border-radius-xs !default;
-$dropdown-box-shadow:               0 50px 100px rgba(50, 50, 93, .1), 0 15px 35px rgba(50, 50, 93, .15), 0 5px 15px rgba(0, 0, 0, .1);
-
-$dropdown-link-active-color:        $component-active-color !default;
-$dropdown-link-active-bg:           $component-active-bg !default;
 
 // Navs
 
@@ -764,127 +737,6 @@ $full-width:                        100% !default;
 $navbar-padding:                    10px 15px !default;
 
 
-// Alerts
-
-$alert-padding-y: .9rem !default;
-$alert-padding-x: 1.25rem !default;
-$alert-border-radius: $border-radius-sm !default;
-
-$alert-bg-level: -2 !default;
-$alert-border-level: -2 !default;
-$alert-color-level: 0 !default;
-
-
-// List group
-
-$list-group-bg:                     $white !default;
-$list-group-border-color:           $border-color !default; //rgba($black, .125);
-$list-group-border-width:           $border-width !default;
-$list-group-border-radius:          $border-radius !default;
-
-$list-group-item-padding-y:         1rem !default;
-$list-group-item-padding-x:         1rem !default;
-
-$list-group-hover-bg:               $gray-100 !default;
-$list-group-active-color:           $component-active-color !default;
-$list-group-active-bg:              $component-active-bg !default;
-$list-group-active-border-color:    $list-group-active-bg !default;
-
-$list-group-disabled-color:         $gray-600 !default;
-$list-group-disabled-bg:            $list-group-bg !default;
-
-$list-group-action-color:           $gray-700 !default;
-$list-group-action-hover-color:     $list-group-action-color !default;
-
-$list-group-action-active-color:    $list-group-action-color !default;
-$list-group-action-active-bg:       $gray-200 !default;
-
-
-// Close
-
-$close-font-size:                   $font-size-base * 1.5 !default;
-$close-font-weight:                 $font-weight-bold !default;
-$close-bg:                          transparent !default;
-$close-hover-bg:                    transparent !default;
-$close-color:                       rgba(0, 0, 0, .6);
-$close-hover-color:                 rgba(0, 0, 0, .9);
-$close-text-shadow:                 none !default;
-
-
-// Popovers
-
-$popover-font-size:                 $font-size-sm !default;
-$popover-bg:                        $white !default;
-$popover-max-width:                 276px !default;
-$popover-border-width:              1px !default;
-$popover-border-color:              rgba($black, .05);
-$popover-border-radius:             $border-radius-lg !default;
-$popover-box-shadow:                0px .5rem 2rem 0px rgba($black, .2);
-
-$popover-header-bg:                 $popover-bg !default;
-$popover-header-color:              $headings-color !default;
-$popover-header-padding-y:          .75rem !default;
-$popover-header-padding-x:          .75rem !default;
-
-$popover-body-color:                $body-color !default;
-$popover-body-padding-y:            $popover-header-padding-y !default;
-$popover-body-padding-x:            $popover-header-padding-x !default;
-
-$popover-arrow-width:               1.5rem !default;
-$popover-arrow-height:              .75rem !default;
-$popover-arrow-color:               $popover-bg !default;
-
-$popover-arrow-outer-color:         transparent !default;
-
-// Breadcrumbs
-
-$breadcrumb-bg:                     $black-states !default;
-$breadcrumb-divider-color:          $white !default;
-$breadcrumb-active-color:           $white !default;
-
-
-
-
-// Badges
-
-$badge-font-size:                   $font-size-xs !default;
-$badge-font-weight:                 $font-weight-extra-bold !default;
-$badge-padding-y:                   .25rem !default;
-$badge-padding-x:                   .5rem !default;
-$badge-border-radius:               $border-radius !default;
-$badge-text-transfom:               uppercase;
-
-$badge-pill-padding-x:              .875em !default;
-$badge-pill-border-radius:          $border-radius-xl !default;
-
-$badge-circle-size:                 2rem;
-
-// Pagination
-
-$pagination-padding-y:                0 !default;
-$pagination-padding-x:                .6875rem !default;
-
-
-$pagination-color:                  $white !default;
-$pagination-bg:                     transparent  !default;
-$pagination-border-width:           $border-width !default;
-$pagination-border-color:           $gray-300 !default;
-
-//$pagination-focus-box-shadow:       $btn-hover-box-shadow !default;
-
-$pagination-hover-color:            $gray-600 !default;
-$pagination-hover-bg:               $gray-300 !default;
-$pagination-hover-border-color:     $gray-300 !default;
-
-$pagination-active-color:           $component-active-color !default;
-$pagination-active-bg:              $component-active-bg !default;
-$pagination-active-border-color:    $pagination-active-bg !default;
-$pagination-active-box-shadow:      $btn-hover-box-shadow !default;
-
-$pagination-disabled-color:         $gray-600 !default;
-$pagination-disabled-bg:            transparent !default;
-$pagination-disabled-border-color:  $gray-300 !default;
-
 
 // Cards
 
@@ -899,96 +751,8 @@ $card-bg:                           $white !default;
 $card-black-background:             #27293d !default;
 $card-img-overlay-padding:          1.25rem !default;
 
-//$card-group-margin:                 ($grid-gutter-width / 2);
-//$card-deck-margin:                  $card-group-margin !default;
 
 $card-columns-count:                3 !default;
 $card-columns-gap:                  1.25rem !default;
 $card-columns-margin:               $card-spacer-y !default;
 
-// Tooltips
-
-$tooltip-font-size:                 $font-size-sm !default;
-$tooltip-max-width:                 200px !default;
-$tooltip-color:                     $black !default;
-$tooltip-bg:                        $white !default;
-$tooltip-border-radius:             $border-radius !default;
-$tooltip-opacity:                   .9 !default;
-$tooltip-padding-y:                 .25rem !default;
-$tooltip-padding-x:                 .5rem !default;
-$tooltip-margin:                    0 !default;
-
-$tooltip-arrow-width:               .8rem !default;
-$tooltip-arrow-height:              .4rem !default;
-$tooltip-arrow-color:               $tooltip-bg !default;
-
-// Modals
-
-$modal-inner-padding:               24px 24px 16px 24px !default;
-
-$modal-lg:                          800px !default;
-$modal-md:                          500px !default;
-$modal-sm:                          380px !default;
-$modal-title-line-height:           1.1;
-$modal-content-bg:               $white !default;
-$modal-content-border-color:     rgba($black, .2);
-$modal-content-border-width:     1px !default;
-$modal-content-border-radius:    $border-radius-sm !default;
-$modal-content-box-shadow-xs:    0px 10px 50px 0px rgba(0, 0, 0, 0.5);
-$modal-content-box-shadow-sm-up: 0 15px 35px rgba(50,50,93,.2), 0 5px 15px rgba(0,0,0,.17);
-
-$modal-backdrop-bg:           $black !default;
-$modal-backdrop-opacity:      .16 !default;
-$modal-header-border-color:   $gray-200 !default;
-$modal-footer-border-color:   $modal-header-border-color !default;
-$modal-header-border-width:   $modal-content-border-width !default;
-$modal-footer-border-width:   $modal-header-border-width !default;
-$modal-header-padding:        24px 24px 0 24px !default;
-
-// Progress bars
-
-$progress-height:                   .5rem !default;
-$progress-bg:                       rgba(0, 0, 0, 0.3) !default;
-$progress-border-radius:            $border-radius-xl !default;
-$progress-box-shadow:               0px 0px 0px 3px rgba(0, 0, 0, 0.3) !default;
-$progress-bar-color:                $white !default;
-
-// Datepicker
-
-$datepicker-border-radius: $card-border-radius !default;
-$datepicker-dropdown-padding: 20px 22px !default;
-
-$datepicker-cell-transition: $transition-base !default;
-$datepicker-cell-hover-background: lighten($gray-400, 55%);
-$datepicker-cell-border-radius: 50% !default;
-$datepicker-cell-width: 36px !default;
-$datepicker-cell-height: 36px !default;
-
-$datepicker-disabled-cell-color: $gray-300 !default;
-$datepicker-disabled-old-new-color: $gray-500 !default;
-
-$datepicker-header-cell-border-radius: $border-radius !default;
-
-$datepicker-active-color: $white !default;
-$datepicker-active-background: theme-color("primary") !default;
-$datepicker-active-box-shadow:      none !default;
-
-$datepicker-range-background: theme-color("primary") !default;
-$datepicker-range-cell-focused-background: darken($datepicker-range-background, 5%);
-$datepicker-range-color: $white !default;
-$datepicker-range-highlighted-bg: $gray-200 !default;
-
-$datepicker-dropdown-border: lighten($gray-400, 40%);
-$datepicker-dropdown-bg: $white !default;
-$datepicker-highlighted-bg: $datepicker-active-background !default;
-
-
-// Footer
-
-$footer-link-font-size: .85rem !default;
-$footer-bg: theme-color("secondary") !default;
-$footer-color: $gray-600 !default;
-$footer-link-color: $gray-600 !default;
-$footer-link-hover-color: $gray-700 !default;
-$footer-heading-color: $gray-600 !default;
-$footer-heading-font-size: $font-size-sm !default;

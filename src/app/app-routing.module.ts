@@ -10,12 +10,14 @@ import { DecisionComponent } from "./pages/decision/decision.component";
 import { InscriptionComponent } from "./auth/inscription/inscription.component";
 import { AuthentificationComponent } from "./auth/authentification/authentification.component";
 import { SelectProjetMembreComponent } from "./pages/select-projet-membre/select-projet-membre.component";
+import { AuthGuard } from "./service/auth.guard";
 
 const routes: Routes = [
   {
     path: "",
-    redirectTo: "liste-projet",
-    pathMatch: "full"
+    redirectTo: "dashboard",
+    pathMatch: "full",
+    canActivate: [AuthGuard]
   },
   {
     path: "",
@@ -38,11 +40,13 @@ const routes: Routes = [
   },
   {
     path:"liste-projet",
-    component:SelectProjetComponent
+    component:SelectProjetComponent,
+    canActivate: [AuthGuard]
   },
   {
     path:"liste-projet-membre",
-    component:SelectProjetMembreComponent
+    component:SelectProjetMembreComponent,
+    canActivate: [AuthGuard]
   },
   {
     path:"inscription",

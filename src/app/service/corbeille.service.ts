@@ -16,7 +16,7 @@ export class CorbeilleService {
     .pipe(
       map(response => {
         const ticketsTache:TacheTicket[] = response.body
-        if(response.status === 400 || response.status === 500) 
+        if(response.status === 400 || response.status === 500)
           return null
         return ticketsTache
       })
@@ -36,7 +36,7 @@ export class CorbeilleService {
         response => {
           if(response.status === 404)
             return null
-          else 
+          else
             return "votre corveille est vide"
         }
       )
@@ -50,7 +50,7 @@ export class CorbeilleService {
         reponse =>{
           const tache:TacheTicket = reponse.body
           if(reponse.status == 400)
-            return null 
+            return null
           return tache
         }
       )

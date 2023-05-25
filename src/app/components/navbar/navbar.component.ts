@@ -1,7 +1,8 @@
-import { Component, OnInit, ElementRef, OnDestroy } from "@angular/core";
+import { Component, OnInit, ElementRef, OnDestroy, HostListener } from "@angular/core";
 import { ROUTES } from "../sidebar/sidebar.component";
 import { Location } from "@angular/common";
 import { Router } from "@angular/router";
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { MatDialog } from "@angular/material/dialog";
 import { InvitationComponent } from "src/app/pages/dialogs/invitation/invitation.component";
 import { Projet } from "src/app/model/projet";
@@ -14,6 +15,8 @@ import Swal from "sweetalert2";
 import { MembreService } from "src/app/service/membre.service";
 import { SearchPanelComponent } from "src/app/pages/dialogs/search-panel/search-panel.component";
 import { WebSocketInvitationService } from "src/app/service/web-socket-invitation.service";
+import { AuthentificationService } from "src/app/service/authentification.service";
+import { ProjetServiceService } from "src/app/service/projet-service.service";
 
 export interface InvitationPanel{
   projet:Projet
@@ -25,6 +28,14 @@ export interface InvitationPanel{
   styleUrls: ["./navbar.component.css"]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
+
+  navbarScrolled = false;
+
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    this.navbarScrolled = (window.pageYOffset > 0);
+  }
+
   private listTitles: any[];
   location: Location;
   mobile_menu_visible: any = 0;
@@ -44,10 +55,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private dialogInvitation: MatDialog,
     private dialogRecherche: MatDialog,
     private router: Router,
+    private authentificationService:AuthentificationService,
+    private projetService:ProjetServiceService
+
+
   ) {
     this.location = location;
     this.sidebarVisible = false;
-    
+
   }
   // function that adds color white/transparent to the navbar on resize (this is for the collapse)
    updateColor = () => {
@@ -60,12 +75,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
        navbar.classList.add('navbar-transparent');
      }
    };
-   chef:ChefProjet
    membre:Membre
-  ngOnInit() {
-    if(localStorage.getItem('projet')){
-      this.chef = JSON.parse(localStorage.getItem('projet')).chefProjet;
+   role:String;
 
+   ngOnInit(){
+    if(this.authentificationService.getToken().roles.includes('chefProjet')){
+      this.role='chefProjet';
+    }else{
+      const roleToken = this.authentificationService.getToken().roles as Role[]
+      this.role = roleToken.find(role =>
+         role.pk.membreId == this.membreService.getToken().membre.id
+         && role.pk.projetId == this.projetService.getProjetFromLocalStorage().id).type
+         console.log("wellllllltedd+",this.role);
+
+    }
+
+     if(localStorage.getItem('projet')){
       /** pour chercher un membre */
       this.membreService.afficherTousMembres().subscribe(
         data =>{
@@ -248,7 +273,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       data =>{
         console.log(data);
         this.listeRole.splice(this.listeRole.indexOf(role),1)
-        this.toastr.success("vous avez accepté l'invitation")     
+        this.toastr.success("vous avez accepté l'invitation")
       }
     )
   }

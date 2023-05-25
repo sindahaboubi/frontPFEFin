@@ -24,13 +24,13 @@
                 <br>
                 <p style="margin-top:2px;">C'est votre sprint <strong>{{i+1}}</strong></p>
               </div>
-          
               <button class="btn-terminer w-100" *ngIf="sp.etat!='termine' && verifDate(sp)"  (click)="terminerSprint(sp)" style="height:11%;" >Terminer sprint</button>
               <button class="btn-done w-100" *ngIf="sp.etat=='termine'" matTooltip="sprint terminé" style="height:11%;" disabled><mat-icon>done_outline</mat-icon></button>
             </div>
             <!--end-->
             <!--button pour ajouter sprint-->
             <div
+              *ngIf="role=='dev team'"
               [@slideIn]="clickCount"
               (click)="move()"
               (click)="openDialogCreateSprint()"
@@ -50,7 +50,7 @@
 
 <div class="row">
           <!--btn list des ticket histoire-->
-          <button class="btn-lg btn-outline-danger ms-auto  bd-highlight" (click)="basculerElement()">
+          <button *ngIf="role=='po'" class="btn-lg btn-outline-danger ms-auto  bd-highlight" (click)="basculerElement()">
             <i class="fa fa-list" aria="hiden"></i>Toute la liste
           </button>
 <details name="backlog" #detailElement  >
@@ -72,24 +72,12 @@
           <span>{{listHTByPB.titre}}</span> &nbsp;
           <span id="priorite">({{listHTByPB.priorite}})</span>
 
-
-          <!-- <select (change)="assignUserStoryToSprint(listHTByPB.id, $event.target.value)"
-          [(ngModel)]="listHTByPB.sprintId" [disabled]="isSprintInProgress(listHTByPB.sprintId)">
-            <option value="" [selected]="!listHTByPB.sprintId">-- Sélectionner un sprint --</option>
-            <option
-            *ngFor="let sprint of sprints; index as i"
-            [value]="sprint.id"
-            [selected]="listHTByPB.sprintId == sprint.id"
-            >{{'Sprint '+(i+1)}} </option>
-        </select> -->
-
-
         <select (change)="assignUserStoryToSprint(listHTByPB.id, $event.target.value)"
           [(ngModel)]="listHTByPB.sprintId" [disabled]="isSprintInProgress(listHTByPB.sprintId)">
-          <option value="" [selected]="!listHTByPB.sprintId">-- Sélectionner un sprint --</option>
+          <option value="" [disabled]="role!='dev team'" [selected]="!listHTByPB.sprintId">-- Sélectionner un sprint --</option>
           <ng-container *ngFor="let sprint of sprints; index as i">
               <ng-container *ngIf="sprint.etat !== 'en cours'">
-                  <option [value]="sprint.id" [selected]="listHTByPB.sprintId == sprint?.id">
+                  <option [disabled]="role!='dev team'" [value]="sprint.id" [selected]="listHTByPB.sprintId == sprint?.id">
                       {{'Sprint '+(i+1)}}
                   </option>
               </ng-container>
@@ -103,7 +91,7 @@
 
 
 
-          <i id="btnUpdate"
+          <i id="btnUpdate" *ngIf="role=='po'"
           [disabled]="isSprintInProgress(listHTByPB.sprintId)"
           (click)="openDialogUpdateUserStory(listHTByPB.id)"
           class="fa-solid fa-pen"
@@ -111,7 +99,7 @@
           </i>
 
 
-          <i id="btnDelete"
+          <i id="btnDelete" *ngIf="role=='po'"
           [disabled]="isSprintInProgress(listHTByPB.sprintId)"
           (click)="removeUserStoryFromProductBacklog(listHTByPB.id)"
           class="fa-solid fa-trash"
@@ -127,7 +115,7 @@
 
 <!--liste histoire tickets-->
 <div class="col-lg-5" [@fadeIn] *ngIf="elementCreated" #newElement>
-  <div class="example-container">
+  <div class="example-container" *ngIf="role=='po'">
     <div class="add-ticket-container">
       <button mat-fab (click)="openDialog()" class="add-ticket-button">
         <mat-icon class="plus">+</mat-icon>

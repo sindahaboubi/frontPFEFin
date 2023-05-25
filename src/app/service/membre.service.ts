@@ -4,8 +4,12 @@ import { Observable } from 'rxjs';
 import { TicketHistoire } from '../model/ticket-histoire';
 import { map } from 'rxjs';
 import { Membre } from '../model/membre';
+import jwt_decode from 'jwt-decode';
+
 const URL = "http://localhost:9999/membre-service/membres"
-const URL2 = "http://localhost:9999/inscription-service/inscription"
+const URL2 = "http://localhost:9999/inscription-service/auth"
+const URL3 = "http://localhost:9999/inscription-service/inscription"
+
 
 
 @Injectable({
@@ -46,7 +50,7 @@ export class MembreService {
   }
 
   inscription(membre:Membre){
-    return this.http.post<Membre>(`${URL2}/membre`,membre,{observe:'response'})
+    return this.http.post<Membre>(`${URL3}/membre`,membre,{observe:'response'})
     .pipe(
       map(
         response =>{
@@ -59,4 +63,58 @@ export class MembreService {
     )
   }
 
+  modifierProfil(membre: Membre): Observable<Membre> {
+    return this.http.put<Membre>(`${URL}`, membre);
+  }
+
+  decodeToken(token: string): any {
+    const decodedToken = jwt_decode(token);
+    return decodedToken;
+  }
+
+  getMembreFromToken(){
+    const token = localStorage.getItem('token');
+    const decodedToken = this.decodeToken(token);
+    const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+
+    const membre: Membre = {
+      id,
+      email,
+      nom: nom,
+      prenom:prenom,
+      adresse:adresse,
+      username:username,
+      telephone:telephone,
+      status:status,
+      dateInscription:dateInscription
+    };
+    return decodedToken;
+  }
+
+  extractRolesFromToken(decodedToken: any): string[] {
+    const roles = decodedToken.roles || [];
+    return roles;
+  }
+
+  getToken() {
+    const token = localStorage.getItem('token');
+    const decodedToken = this.decodeToken(token);
+    const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+
+    const membre: Membre = {
+      id,
+      email,
+      nom: nom,
+      prenom: prenom,
+      adresse: adresse,
+      username: username,
+      telephone: telephone,
+      status: status,
+      dateInscription: dateInscription
+    };
+
+    const roles = this.extractRolesFromToken(decodedToken);
+
+    return { membre, roles };
+  }
 }

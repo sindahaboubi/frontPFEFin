@@ -104,19 +104,18 @@ export class InscriptionComponent implements OnInit {
       ...this.personneFormGroup.value,
       ...this.membreFormGroup.value
     }
-   
+
     if(localStorage.getItem('membre')){
       const id = JSON.parse(localStorage.getItem('membre')).id
-      membre.id = id ; 
+      membre.id = id ;
       this.enregistrerMembre(membre)
     }else{
       this.enregistrerMembre(membre)
-    }   
+    }
   }
 
 
   enregistrerMembre(membre:Membre){
-
     this.membreService.inscription(membre).subscribe(
       data => {
           Swal.fire(
@@ -125,20 +124,12 @@ export class InscriptionComponent implements OnInit {
             'success'
           ).then(
             result=>{
-              if(localStorage.getItem("membre"))
-                localStorage.removeItem("membre")
               this.router.navigateByUrl('/auth')
             }
           )
       },
-      error =>{
-        Swal.fire(
-          'Attention !',
-          'erreur d\'inscription',
-          'error'
-        )
-      }
       
+
       )
   }
 
@@ -154,7 +145,6 @@ export class InscriptionComponent implements OnInit {
     }
     chefProjet.photo = byteArray;
     console.log(chefProjet);
-    
     this.chefProjetService.inscription(chefProjet).subscribe(
       data =>{
         if(!data)

@@ -7,7 +7,7 @@ declare interface RouteInfo {
   rtlTitle: string;
   icon: string;
   disabled?:boolean,
-  class: string;
+  class: string,
 }
 export const ROUTES: RouteInfo[] = [
   {
@@ -18,14 +18,14 @@ export const ROUTES: RouteInfo[] = [
     class: ""
   },
   {
-    path: "/icons",
-    title: "product backlog",
+    path: "/planification-projet",
+    title: "Planification projet",
     rtlTitle: "مهام المنتج",
     icon: "icon-tablet-2",
     class: ""
   },
   {
-    path: "/maps",
+    path: "/sprint-backlog",
     title: "sprint backlog",
     rtlTitle: "مهام سبرنت",
     icon: "icon-tie-bow",
@@ -47,23 +47,22 @@ export const ROUTES: RouteInfo[] = [
     class: ""
   },
   {
-    path: "/tables",
+    path: "/dossiers",
     title: "liste des ressources",
     rtlTitle: "الموارد المشترك ",
     icon: "icon-puzzle-10",
     class: ""
   },
   {
-    path: "/typography",
+    path: "/chat-bot",
     title: "Scrum teacher",
     rtlTitle: "طباعة",
     icon: "icon-align-center",
-    class: "",
-    disabled:JSON.parse(localStorage.getItem("chef-projet"))!=null
+    class: ""
   },
   {
-    path: "/rtl",
-    title: "RTL Support",
+    path: "/feuille-route",
+    title: "Feuille de route",
     rtlTitle: "ار تي ال",
     icon: "icon-world",
     class: ""
@@ -86,40 +85,27 @@ export class SidebarComponent implements OnInit {
   menuItems: any[];
 
   constructor(
-   // private sprintService: SprintService
+    private sprintService: SprintService
   ) {}
 
   sprintLancee:number
   ngOnInit() {
-    // this.sprintService.getListSprintsByProductBacklog(JSON.parse(localStorage.getItem('productBacklogCourant')).id)
-    // .subscribe(
-    //   data => {
-    //     this.sprintLancee = data.filter(sprint => sprint.etat == "en cours")?.length
-    //     this.menuItems = ROUTES.map((menuItem) =>
-    //     menuItem.path === "/maps"
-    //       ? {
-    //           ...menuItem,
-    //           disabled: this.sprintLancee == 0,
-    //         }
-    //       : menuItem
-    //   );
-    //   }
-    // )
+    this.sprintService.getListSprintsByProductBacklog(JSON.parse(localStorage.getItem('productBacklogCourant')).id)
+    .subscribe(
+      data => {
+        this.sprintLancee = data.filter(sprint => sprint.etat == "en cours")?.length
+        this.menuItems = ROUTES.map((menuItem) =>
+        menuItem.path === "/sprint-backlog"
+          ? {
+              ...menuItem,
+              disabled: this.sprintLancee == 0,
+            }
+          : menuItem
+      );
+      }
+    )
    this.menuItems = ROUTES.filter(menuItem => menuItem);
   }
-
-  // ngOnChanges() {
-  //   if (this.sprintLancee != 0) {
-  //     this.menuItems = ROUTES.map((menuItem) =>
-  //     menuItem.path === "/maps"
-  //       ? {
-  //           ...menuItem,
-  //           disabled: false,
-  //         }
-  //       : menuItem
-  //   );
-  //   }
-  // }
 
   isMobileMenu() {
     if (window.innerWidth > 991) {

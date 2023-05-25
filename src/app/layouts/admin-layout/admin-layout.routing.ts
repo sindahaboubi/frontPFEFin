@@ -10,18 +10,20 @@ import { ScrumBoardComponent } from "src/app/pages/scrum-board/scrum-board.compo
 import { CourbesComponent } from "src/app/pages/courbes/courbes.component";
 import { CorbeilleComponent } from "src/app/pages/corbeille/corbeille.component";
 import { ModifierProfileComponent } from "src/app/pages/modifier-profile/modifier-profile.component";
+import { AuthGuard } from "src/app/service/auth.guard";
 
 
 export const AdminLayoutRoutes: Routes = [
-  { path: "dashboard", component: DashboardComponent },
-  { path: "icons", component: IconsComponent },
-  { path: "maps", component: MapComponent },
-  { path: "scrumBoard", component: ScrumBoardComponent },
-  { path: "user", component: ModifierProfileComponent },
-  {path:"visioConference",component:UserComponent},
-  { path: "tables", component: TablesComponent },
-  { path: "typography", component: TypographyComponent },
-  { path: "courbes", component: CourbesComponent },
-  {path: "corbeille", component:CorbeilleComponent}
-  // { path: "rtl", component: RtlComponent }
+  { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: "planification-projet", component: IconsComponent, canActivate: [AuthGuard] },
+  { path: "sprint-backlog", component: MapComponent, canActivate: [AuthGuard] },
+  { path: "scrumBoard", component: ScrumBoardComponent, canActivate: [AuthGuard] },
+  { path: "user", component: ModifierProfileComponent, canActivate: [AuthGuard] },
+  {path:"visioConference",component:UserComponent, canActivate: [AuthGuard]},
+  { path: "dossiers", component: TablesComponent, canActivate: [AuthGuard] },
+  { path: "chat-bot", component: TypographyComponent, canActivate: [AuthGuard] },
+  { path: "courbes", component: CourbesComponent, canActivate: [AuthGuard] },
+  {path: "corbeille", component:CorbeilleComponent, canActivate: [AuthGuard]},
+  { path: "feuille-route", component: CourbesComponent, canActivate: [AuthGuard] },
+
 ];

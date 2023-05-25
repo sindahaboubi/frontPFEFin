@@ -37,4 +37,10 @@ export class ProjetServiceService {
     return id;
   }
 
+  getProjetFromLocalStorage(){
+    let projetCourantStr = localStorage.getItem("projet");
+    let projetCourantObj = JSON.parse(projetCourantStr);
+    return projetCourantObj;
+  }
+
 }

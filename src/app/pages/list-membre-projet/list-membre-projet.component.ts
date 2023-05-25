@@ -57,8 +57,6 @@ export class ListMembreProjetComponent implements OnInit{
     const projet = JSON.parse(localStorage.getItem('projet'))
     this.roleService.afficherListRoleParProjet(projet.id).subscribe(
       dataRoles => {
-        console.log(dataRoles);
-        
         this.listeRole = dataRoles.filter(role => role.status == "ACCEPTE")
         for(let role of dataRoles){
           if(role.status == "ACCEPTE" && role.type=="dev team")

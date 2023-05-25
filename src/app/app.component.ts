@@ -33,12 +33,10 @@ export class AppComponent implements OnInit {
   }
   ws: WebSocketSubject<any>;
   message$: Observable<Message>;
- 
   connected: boolean;
   ngOnInit() {
     this.webSocketService.connect().subscribe()
     this.webSocketDossierService.connect().subscribe()
     this.webSocketInvitationService.connect().subscribe()
   }
-  
 }

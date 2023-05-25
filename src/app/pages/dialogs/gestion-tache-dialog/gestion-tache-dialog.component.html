@@ -1,6 +1,6 @@
 
 <h1 mat-dialog-title><mat-icon>task</mat-icon> Gerer votre Tâche
-    <button mat-mini-fab style="margin-left:35%;margin-top:2%;" class="pull-right d-flex" color="warn" mat-dialog-close><mat-icon>close</mat-icon></button>    
+    <button mat-mini-fab style="margin-left:35%;margin-top:2%;" class="pull-right d-flex" color="warn" mat-dialog-close><mat-icon>close</mat-icon></button>
 <hr></h1>
 
 
@@ -23,9 +23,9 @@
             </button>
 </div>
 
-<div mat-dialog-content style="overflow-y:auto">   
+<div mat-dialog-content style="overflow-y:auto">
     <form [formGroup]="modifTicketForm" (ngSubmit)="modifierTache()" *ngIf="openForm" style="margin-top:3%;">
-        
+
         <div class="container">
             <div class="row">
             <mat-form-field class="d-flex col-lg-6 col-md-6 col-sm-6">
@@ -33,7 +33,6 @@
                 <textarea matInput formControlName="titre"  placeholder="Ex. It makes me feel..."></textarea>
                 <mat-error *ngIf="modifTicketForm.get('titre').hasError('required')">Ce champ est obligatoire</mat-error>
             </mat-form-field>
-            
             <mat-form-field class="d-flex col-lg-6 col-md-6 col-sm-6">
                 <mat-label>description</mat-label>
                 <textarea matInput formControlName="description"  placeholder="Ex. It makes me feel..."></textarea>

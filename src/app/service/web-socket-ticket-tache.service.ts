@@ -20,9 +20,9 @@ export class WebSocketTicketTacheService {
   messageSupprimer$: Observable<TacheTicket>;
   messageModifier$: Observable<TacheTicket>;
   ticketTache:TacheTicket
-  
+
   connect() {
-   this.ws = webSocket('ws://localhost:8093/tache'); 
+   this.ws = webSocket('ws://localhost:8093/tache');
    return  this.ws
   }
 
@@ -70,6 +70,5 @@ export class WebSocketTicketTacheService {
     return this.ws
   }
 
-  
 
 }

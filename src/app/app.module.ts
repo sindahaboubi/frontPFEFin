@@ -1,7 +1,7 @@
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { ToastrModule } from 'ngx-toastr';
 
@@ -62,6 +62,9 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ProjetKeyComponent } from './pages/dialogs/projet-key/projet-key.component';
 import { ModifierProfileComponent } from './pages/modifier-profile/modifier-profile.component';
 import { SelectProjetMembreComponent } from './pages/select-projet-membre/select-projet-membre.component';
+// import { CalendarModule } from 'angular-calendar';
+import { ChooseTypeDialogComponent } from './pages/dialogs/choose-type-dialog/choose-type-dialog.component'; // Import du module CalendarModule
+import { AuthInterceptor } from "./interceptors/auth.interceptor";
 
 
 @NgModule({
@@ -101,7 +104,8 @@ import { SelectProjetMembreComponent } from './pages/select-projet-membre/select
     MatButtonModule,
     MatDialogModule,
     MatStepperModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    // CalendarModule
   ],
   declarations: [AppComponent, AdminLayoutComponent, AuthLayoutComponent, SelectProjetComponent,
     SprintDialogPanelComponent, AjouterTicketHistoireFormComponent, AjouterSprintFormComponent,
@@ -110,9 +114,15 @@ import { SelectProjetMembreComponent } from './pages/select-projet-membre/select
     UpdateUserStoryDialogComponent,
     ScrumBoardComponent,
     DecisionComponent,
-    InvitationComponent, PerformanceCourbeComponent, InscriptionComponent, AuthentificationComponent, SearchPanelComponent, ConsuletMembrePanelComponent, ProjetKeyComponent, ModifierProfileComponent, SelectProjetMembreComponent
+    InvitationComponent, PerformanceCourbeComponent, InscriptionComponent, AuthentificationComponent, SearchPanelComponent, ConsuletMembrePanelComponent, ProjetKeyComponent, ModifierProfileComponent, SelectProjetMembreComponent, ChooseTypeDialogComponent
     ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 
 })
