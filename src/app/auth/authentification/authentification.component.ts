@@ -25,93 +25,55 @@ export class AuthentificationComponent implements OnInit {
 
   dialogRef: MatDialogRef<any>;
 
-  // login() {
+//   login() {
+//     this.authService.login(this.credentials).subscribe(
+//       (response) => {
+//         const token = response.token;
+//         localStorage.setItem('token', token);
 
-  //   this.authService.login(this.credentials).subscribe(
-  //     (response: any) => {
-  //       if (response.userType === 'chooseType') {
-  //         this.userType = '';
+//         const { roles } = this.chefProjetService.getToken();
+//         const { chefProjet } = this.chefProjetService.getToken();
+//         const { membre } = this.membreService.getToken();
+//         console.log("Membre = ",membre);
+//         console.log("Chef projet = ",chefProjet);
+//         console.log('Role(s) = ',roles);
 
-  //         this.dialogRef = this.dialog.open(ChooseTypeDialogComponent, {
-  //           width: '400px',
-  //           height:'200px'
-  //         });
+//         if (roles.includes('chefProjet')) {
+//           this.router.navigate(['liste-projet']);
+//         } else {
+//           this.router.navigate(['liste-projet-membre']);
+//         }
+//       },
+//       (error) => {
+//       }
+//     )
+// }
 
-  //         this.dialogRef.afterClosed().subscribe((result) => {
-  //           if (result == 'membre') {
+login() {
+  this.authService.login(this.credentials).subscribe(
+    (response: any) => {
+      const token = response.token;
+      sessionStorage.setItem('token', token);
+      const { chefProjet, membre, roles } = this.authService.getUserRolesToken(token);
 
-  //             this.authenticateMembre();
-  //           } else if (result == 'chefProjet') {
-  //             this.authenticateChefProjet();
-  //           }
-  //         });
-  //       } else if (response.userType == 'membre') {
-  //         this.authenticateMembre();
-  //       } else if (response.userType == 'chefProjet') {
-  //         this.authenticateChefProjet();
-  //       } else {
-  //       }
-  //     },
-  //     (error: any) => {
-  //     }
-  //   );
-  // }
-
-  login() {
-    this.authService.login(this.credentials).subscribe(
-      (response) => {
-        const token = response.token;
-        localStorage.setItem('token', token);
-
-        const { roles } = this.chefProjetService.getToken();
-        const { chefProjet } = this.chefProjetService.getToken();
-        const { membre } = this.membreService.getToken();
-        console.log("Membre = ",membre);
-        console.log("Chef projet = ",chefProjet);
-        console.log('Role(s) = ',roles);
-
-        if (roles.includes('chefProjet')) {
-          this.router.navigate(['liste-projet']);
-        } else {
-          this.router.navigate(['liste-projet-membre']);
-        }
-      },
-      (error) => {
+      if (roles.includes('chefProjet')) {
+        this.router.navigate(['liste-projet']);
+        console.log("chef projet = ",chefProjet);
+        console.log("roles = ",roles);
+      } else {
+        this.router.navigate(['liste-projet-membre']);
+        console.log("membre", membre);
+        console.log("roles = ",roles);
       }
-    )
+    },
+    (error: any) => {
+      console.error('Erreur de connexion', error);
+    }
+  );
 }
 
-
-  // authenticateMembre() {
-  //   this.authService.authenticateMembre(this.credentials as Membre).subscribe(
-  //     (response: any) => {
-  //       console.log('Type utilisateur : ', response);
-  //       localStorage.setItem('token',response.token);
-  //       this.router.navigateByUrl('/liste-projet-membre');
-  //       this.membreService.getMembreFromToken();
-  //     },
-  //     (error: any) => {
-  //     }
-  //   );
-  // }
-
-  // authenticateChefProjet() {
-  //   this.authService.authenticateChefProjet(this.credentials as ChefProjet).subscribe(
-  //     (response: any) => {
-  //       console.log('Token généré :', response.token);
-  //       console.log('Type utilisateur : ', response.userType);
-  //       localStorage.setItem('token', response.token);
-  //       localStorage.setItem('role',response.userType);
-  //       this.router.navigateByUrl('/liste-projet');
-  //       this.chefProjetService.getChefProjetFromToken();
-  //     },
-  //     (error: any) => {
-  //       // Gestion des erreurs
-  //     }
-  //   );
-  // }
-
 ngOnInit() {
+  sessionStorage.clear();
   localStorage.clear();
 }
 

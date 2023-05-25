@@ -5,6 +5,7 @@ import { TicketHistoire } from '../model/ticket-histoire';
 import { map } from 'rxjs';
 import { Membre } from '../model/membre';
 import jwt_decode from 'jwt-decode';
+import { Role } from '../model/role';
 
 const URL = "http://localhost:9999/membre-service/membres"
 const URL2 = "http://localhost:9999/inscription-service/auth"
@@ -43,6 +44,7 @@ export class MembreService {
         return m;
       }));
   }
+
   supprimerMembre(id:number):Observable<void>{
     return this.http.delete<void>(`${URL}/`+id);
   }
@@ -70,49 +72,48 @@ export class MembreService {
     return decodedToken;
   }
 
-  getMembreFromToken(){
-    const token = localStorage.getItem('token');
-    const decodedToken = this.decodeToken(token);
-    const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+  // getMembreFromToken(){
+  //   const token = localStorage.getItem('token');
+  //   const decodedToken = this.decodeToken(token);
+  //   const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
 
-    const membre: Membre = {
-      id,
-      email,
-      nom: nom,
-      prenom:prenom,
-      adresse:adresse,
-      username:username,
-      telephone:telephone,
-      status:status,
-      dateInscription:dateInscription
-    };
-    return decodedToken;
-  }
+  //   const membre: Membre = {
+  //     id,
+  //     email,
+  //     nom: nom,
+  //     prenom:prenom,
+  //     adresse:adresse,
+  //     username:username,
+  //     telephone:telephone,
+  //     status:status,
+  //     dateInscription:dateInscription
+  //   };
+  //   return decodedToken;
+  // }
 
-  extractRolesFromToken(decodedToken: any): string[] {
+  extractRolesFromToken(decodedToken: any): string[] |Role[] {
     const roles = decodedToken.roles || [];
     return roles;
   }
 
-  getToken() {
-    const token = localStorage.getItem('token');
+  getMembreFromToken() {
+    const token = sessionStorage.getItem('token');
     const decodedToken = this.decodeToken(token);
-    const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
-
-    const membre: Membre = {
-      id,
-      email,
-      nom: nom,
-      prenom: prenom,
-      adresse: adresse,
-      username: username,
-      telephone: telephone,
-      status: status,
-      dateInscription: dateInscription
-    };
-
     const roles = this.extractRolesFromToken(decodedToken);
-
-    return { membre, roles };
+    if(!roles.includes('chefProjet')){
+      const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+      const membre: Membre = {
+        id,
+        email,
+        nom: nom,
+        prenom: prenom,
+        adresse: adresse,
+        username: username,
+        telephone: telephone,
+        status: status,
+        dateInscription: dateInscription
+      };
+      return membre;
+    }
   }
 }

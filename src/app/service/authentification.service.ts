@@ -2,6 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
+import { Role } from '../model/role';
+import { ChefProjet } from '../model/chef-projet';
+import { Membre } from '../model/membre';
 
 const URL1 = "http://localhost:9999/authentification-service/auth";
 
@@ -13,28 +16,15 @@ export class AuthentificationService {
   constructor(private http:HttpClient) { }
 
   isLoggedIn(): boolean {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return !!token;
-  }
-
-  isHasRole(): boolean{
-    const role = localStorage.getItem('role');
-    return !!role;
   }
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${URL1}/login`, credentials);
   }
 
-  // authenticateMembre(credentials: any): Observable<any> {
-  //   return this.http.post(`${URL1}/membre`, credentials);
-  // }
-
-  // authenticateChefProjet(credentials: any): Observable<any> {
-  //   return this.http.post(`${URL1}/chefProjet`, credentials);
-  // }
-
-  extractRolesFromToken(decodedToken: any): string[] {
+  extractRolesFromToken(decodedToken: any): string[] |Role[] {
     const roles = decodedToken.roles || [];
     return roles;
   }
@@ -44,12 +34,37 @@ export class AuthentificationService {
     return decodedToken;
   }
 
-  getToken() {
-    const token = localStorage.getItem('token');
+  getUserRolesToken(token: string) {
     const decodedToken = this.decodeToken(token);
     const roles = this.extractRolesFromToken(decodedToken);
-    return { roles };
+    if(roles.includes('chefProjet')){
+      const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+      const chefProjet: ChefProjet = {
+        id:id,
+        email:email,
+        nom: nom,
+        prenom:prenom,
+        adresse:adresse,
+        username:username,
+        telephone:telephone,
+        dateInscription:dateInscription
+      };
+      return {chefProjet, roles};
+    }else{
+      const { id, email, nom, prenom, adresse, username, telephone, status, dateInscription } = decodedToken;
+      const membre: Membre = {
+        id,
+        email,
+        nom: nom,
+        prenom: prenom,
+        adresse: adresse,
+        username: username,
+        telephone: telephone,
+        status: status,
+        dateInscription: dateInscription
+      };
+      return {membre, roles};
+    }
   }
-
 
 }

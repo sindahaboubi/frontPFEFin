@@ -373,18 +373,21 @@ removeUserStoryFromProductBacklog(id: number) {
 
   role:String;
     ngOnInit(){
-      if(this.authentificationService.getToken().roles.includes('chefProjet')){
+      if(this.authentificationService.getUserRolesToken(sessionStorage.getItem('token')).roles.includes('chefProjet')){
         this.role='chefProjet';
       }else{
-        const roleToken = this.authentificationService.getToken().roles as Role[]
+        const roleToken = this.authentificationService.getUserRolesToken(sessionStorage.getItem('token')).roles as Role[]
         this.role = roleToken.find(role =>
-           role.pk.membreId == this.membreService.getToken().membre.id
+           role.pk.membreId == this.membreService.getMembreFromToken().id
            && role.pk.projetId == this.projetService.getProjetFromLocalStorage().id).type
            console.log("wellllllltedd+",this.role);
 
+           if(this.role=='po'){
+            this.getHistoireTicketsByMembreId(this.membreService.getMembreFromToken().id);
+           }
       }
 
-      this.getHistoireTicketsByMembreId(this.membreService.getMembreFromToken().id);
+
       this.getHistoireTicketsByProductBacklogId(this.getProductBacklogByIdFromLocalStorage());
       this.sprintService.getListSprintsByProductBacklog(this.getProductBacklogByIdFromLocalStorage()).subscribe(
         data => {
