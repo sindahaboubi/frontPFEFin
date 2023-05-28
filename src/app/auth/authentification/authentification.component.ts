@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ChefProjetServiceService } from 'src/app/service/chef-projet-service.service';
 import { MembreService } from 'src/app/service/membre.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-authentification',
@@ -18,62 +19,72 @@ export class AuthentificationComponent implements OnInit {
   credentials: any = {};
 
   constructor(private authService: AuthentificationService, private dialog: MatDialog,
-    private router:Router, private chefProjetService:ChefProjetServiceService,
-    private membreService:MembreService) {}
+    private router: Router, private chefProjetService: ChefProjetServiceService,
+    private membreService: MembreService) { }
 
   dialogRef: MatDialogRef<any>;
 
-//   login() {
-//     this.authService.login(this.credentials).subscribe(
-//       (response) => {
-//         const token = response.token;
-//         localStorage.setItem('token', token);
+  //   login() {
+  //     this.authService.login(this.credentials).subscribe(
+  //       (response) => {
+  //         const token = response.token;
+  //         localStorage.setItem('token', token);
 
-//         const { roles } = this.chefProjetService.getToken();
-//         const { chefProjet } = this.chefProjetService.getToken();
-//         const { membre } = this.membreService.getToken();
-//         console.log("Membre = ",membre);
-//         console.log("Chef projet = ",chefProjet);
-//         console.log('Role(s) = ',roles);
+  //         const { roles } = this.chefProjetService.getToken();
+  //         const { chefProjet } = this.chefProjetService.getToken();
+  //         const { membre } = this.membreService.getToken();
+  //         console.log("Membre = ",membre);
+  //         console.log("Chef projet = ",chefProjet);
+  //         console.log('Role(s) = ',roles);
 
-//         if (roles.includes('chefProjet')) {
-//           this.router.navigate(['liste-projet']);
-//         } else {
-//           this.router.navigate(['liste-projet-membre']);
-//         }
-//       },
-//       (error) => {
-//       }
-//     )
-// }
+  //         if (roles.includes('chefProjet')) {
+  //           this.router.navigate(['liste-projet']);
+  //         } else {
+  //           this.router.navigate(['liste-projet-membre']);
+  //         }
+  //       },
+  //       (error) => {
+  //       }
+  //     )
+  // }
 
-login() {
-  this.authService.login(this.credentials).subscribe(
-    (response: any) => {
-      const token = response.token;
-      sessionStorage.setItem('token', token);
-      const { chefProjet, membre, roles } = this.authService.getUserRolesToken(token);
+  login() {
+    this.authService.login(this.credentials).subscribe(
+      (response: any) => {
+        const token = response.token;
+        sessionStorage.setItem('token', token);
+        const { chefProjet, membre, roles } = this.authService.getUserRolesToken(token);
 
-      if (roles.includes('chefProjet')) {
-        this.router.navigate(['liste-projet']);
-        console.log("chef projet = ",chefProjet);
-        console.log("roles = ",roles);
-      } else {
-        this.router.navigate(['liste-projet-membre']);
-        console.log("membre", membre);
-        console.log("roles = ",roles);
+        if (roles.includes('chefProjet')) {
+          sessionStorage.removeItem("X-Csrftoken")
+          this.router.navigate(['liste-projet']);
+          console.log("chef projet = ", chefProjet);
+          console.log("roles = ", roles);
+        } else {
+          sessionStorage.removeItem("X-Csrftoken")
+          this.router.navigate(['liste-projet-membre']);
+          console.log("membre", membre);
+          console.log("roles = ", roles);
+        }
+      },
+      error => {
+        this.authService.secure().subscribe()
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'une requete forcé est lancer',
+            'error'
+          )
+
       }
-    },
-    (error: any) => {
-      console.error('Erreur de connexion', error);
-    }
-  );
-}
+    );
+  }
 
-ngOnInit() {
-  sessionStorage.clear();
-  localStorage.clear();
-}
+  ngOnInit() {
+    this.authService.secure().subscribe()
+    sessionStorage.clear();
+    localStorage.clear();
+  }
 
 }
 

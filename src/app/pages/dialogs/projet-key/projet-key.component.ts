@@ -63,6 +63,16 @@ export class ProjetKeyComponent implements OnInit {
             this.roleService.afficherRole(pk).subscribe(
               data =>{
                 localStorage.setItem("role", data.type);
+              },
+              error => {
+                console.log(error.status);
+                
+                if (error.status == 401)
+                  Swal.fire(
+                    'Attention',
+                    'Vous n\'avez pas une autorisation',
+                    'error'
+                  )
               }
             )
           }
@@ -75,6 +85,13 @@ export class ProjetKeyComponent implements OnInit {
             },
             error => {
               console.log('Une erreur s\'est produite lors de la récupération du product backlog : ', error);
+              if (error.status == 401)
+                Swal.fire(
+                  'Attention',
+                  'Vous n\'avez pas une autorisation',
+                  'error'
+                )
+            
             }
           );
         }

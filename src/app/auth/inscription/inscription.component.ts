@@ -51,7 +51,7 @@ export class InscriptionComponent implements OnInit {
    this.chefProjetFormGroup = this.formBuilder.group({
     competanceAnalyseDonnees:[false],
     competanceDeGestion:[false],
-    photo:[null,Validators.required]
+    photo:[null]
    })
 
    this.membreFormGroup = this.formBuilder.group({
@@ -139,11 +139,13 @@ export class InscriptionComponent implements OnInit {
       ...this.chefProjetFormGroup.value,
       ...this.personneFormGroup.value
     }
+    if(chefProjet.photo){
     const byteArray = new Array(chefProjet.photo.length);
     for (let i = 0; i < chefProjet.photo.length; i++) {
       byteArray[i] = chefProjet.photo[i];
     }
     chefProjet.photo = byteArray;
+   }
     console.log(chefProjet);
     this.chefProjetService.inscription(chefProjet).subscribe(
       data =>{

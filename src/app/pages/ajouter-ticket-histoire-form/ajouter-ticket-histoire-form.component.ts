@@ -5,6 +5,7 @@ import { HistoireTicketService } from 'src/app/service/histoire-ticket.service';
 import {FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import { MembreService } from 'src/app/service/membre.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ajouter-ticket-histoire-form',
@@ -44,7 +45,14 @@ console.log('id histoire ticket = '+formData.id)
       },
       error => {
         console.error("Erreur d'enregistrement du ticket histoire ! : ", error);
+          if (error.status == 401)
+            Swal.fire(
+              'Attention',
+              'Vous n\'avez pas une autorisation',
+              'error'
+            )
       }
+        
     );
   }
 

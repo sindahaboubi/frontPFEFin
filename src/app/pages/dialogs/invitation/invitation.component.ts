@@ -11,6 +11,7 @@ import { MembreService } from 'src/app/service/membre.service';
 import { RoleService } from 'src/app/service/role.service';
 import Swal from 'sweetalert2';
 import { roleExists } from '../../select-projet/email-exists.validator';
+import { ChefProjetServiceService } from 'src/app/service/chef-projet-service.service';
 
 interface Request {
   invitation: Invitation;
@@ -40,6 +41,7 @@ export class InvitationComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<InvitationComponent>,
     private membreService: MembreService,
+    private chefProjetService:ChefProjetServiceService,
     private invitationService: InvitationService,
     private roleService:RoleService,
     private fb:FormBuilder,
@@ -73,7 +75,7 @@ export class InvitationComponent implements OnInit {
     })
 
     this.invitationForm = this.fb.group({
-      chefProjetId:1,
+      chefProjetId:this.chefProjetService.getChefProjetFromToken().id,
       emailInvitee:"",
       membreId:null
     })
@@ -147,6 +149,16 @@ export class InvitationComponent implements OnInit {
             )
           }
         )
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
     Swal.fire(

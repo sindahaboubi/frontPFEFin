@@ -132,6 +132,16 @@ export class MapComponent implements OnInit {
         for (let role of data) {
           this.listMembre.push(role.membre)
         }
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
 
@@ -148,6 +158,16 @@ export class MapComponent implements OnInit {
 
               this.sprintBacklogs.push(sprintBacklogData);
 
+            },
+            error => {
+              console.log(error.status);
+              
+              if (error.status == 401)
+                Swal.fire(
+                  'Attention',
+                  'Vous n\'avez pas une autorisation',
+                  'error'
+                )
             }
           )
 
@@ -170,6 +190,16 @@ export class MapComponent implements OnInit {
               console.log(this.ticketsTache);
 
 
+            },
+            error => {
+              console.log(error.status);
+              
+              if (error.status == 401)
+                Swal.fire(
+                  'Attention',
+                  'Vous n\'avez pas une autorisation',
+                  'error'
+                )
             }
           )
 
@@ -325,6 +355,16 @@ export class MapComponent implements OnInit {
                     )
                   }
                 );
+              },
+              error => {
+                console.log(error.status);
+                
+                if (error.status == 401)
+                  Swal.fire(
+                    'Attention',
+                    'Vous n\'avez pas une autorisation',
+                    'error'
+                  )
               }
             )
           }

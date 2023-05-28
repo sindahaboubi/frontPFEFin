@@ -11,6 +11,7 @@ import { InscriptionComponent } from "./auth/inscription/inscription.component";
 import { AuthentificationComponent } from "./auth/authentification/authentification.component";
 import { SelectProjetMembreComponent } from "./pages/select-projet-membre/select-projet-membre.component";
 import { AuthGuard } from "./service/auth.guard";
+import { AuthDisableGuard } from "./service/auth-disable.guard";
 
 const routes: Routes = [
   {
@@ -54,7 +55,8 @@ const routes: Routes = [
   },
   {
     path:"auth",
-    component:AuthentificationComponent
+    component:AuthentificationComponent,
+    canActivate: [AuthDisableGuard]
   },
   {
     path:"decision/:idProjet/membres/:idMembre/:token",

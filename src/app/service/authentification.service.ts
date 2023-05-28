@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { Role } from '../model/role';
 import { ChefProjet } from '../model/chef-projet';
@@ -14,6 +14,17 @@ const URL1 = "http://localhost:9999/authentification-service/auth";
 export class AuthentificationService {
 
   constructor(private http:HttpClient) { }
+  csrfToken:string
+
+  secure(){
+    return this.http.get(`${URL1}/init`,{ withCredentials: true,observe:'response' }).pipe(
+      map(response => {
+        const header = response.headers
+        this.csrfToken = header.get('X-Csrftoken');
+        sessionStorage.setItem("X-Csrftoken",this.csrfToken);
+      })
+    )
+  }
 
   isLoggedIn(): boolean {
     const token = sessionStorage.getItem('token');
@@ -21,7 +32,11 @@ export class AuthentificationService {
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post(`${URL1}/login`, credentials);
+    return this.http.post(`${URL1}/login`, credentials,{observe:'response' }).pipe(
+      map(response => {
+        return response.body
+      })
+    )
   }
 
   extractRolesFromToken(decodedToken: any): string[] |Role[] {
@@ -66,5 +81,7 @@ export class AuthentificationService {
       return {membre, roles};
     }
   }
+
+  
 
 }

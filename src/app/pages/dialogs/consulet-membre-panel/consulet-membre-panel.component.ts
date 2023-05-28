@@ -4,6 +4,7 @@ import { Membre } from 'src/app/model/membre';
 import { Role } from 'src/app/model/role';
 import { RoleService } from 'src/app/service/role.service';
 import * as Chart from 'chart.js';
+import Swal from 'sweetalert2';
 
 interface OneMembre{
   membre:Membre
@@ -61,6 +62,16 @@ export class ConsuletMembrePanelComponent implements OnInit {
             maintainAspectRatio: false
           }
         });
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
   }

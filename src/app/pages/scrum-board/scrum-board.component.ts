@@ -111,6 +111,16 @@ ngOnInit() {
         this.selectedSprintId = this.sprints[0].id;
         this.getTicketsTacheBySprint(this.selectedSprintId);
       }
+    },
+    error => {
+      console.log(error.status);
+      
+      if (error.status == 401)
+        Swal.fire(
+          'Attention',
+          'Vous n\'avez pas une autorisation',
+          'error'
+        )
     }
   );
 }
@@ -223,6 +233,16 @@ prendreTicket(idTicketTache:number){
               )
             }
           })
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
 

@@ -57,8 +57,15 @@ export class TablesComponent implements OnInit {
         console.log(data);
 
       },
-      error =>{
-
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
   }

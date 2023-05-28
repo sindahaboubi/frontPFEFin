@@ -3,16 +3,31 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpResponse,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, filter, tap } from 'rxjs';
+import { AuthentificationService } from '../service/authentification.service';
 
 @Injectable()
 export class CsrfInterceptor implements HttpInterceptor {
 
-  constructor() {}
-
+  constructor() { }
+  
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    return next.handle(request);
+    const uri = request.url;
+    if (uri.includes('http://localhost:9999/authentification-service/auth/login') || uri.includes('http://localhost:9999/inscription-service')){
+      const csrfToken = sessionStorage.getItem("X-Csrftoken")
+      console.log("csrf : ", csrfToken);
+      const authRequest = request.clone({
+        setHeaders: {
+          "X-Csrftoken": csrfToken
+        }
+      });
+      return next.handle(authRequest);
+    } else {
+      return next.handle(request)
+    }
   }
+
 }

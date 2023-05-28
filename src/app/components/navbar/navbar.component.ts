@@ -95,6 +95,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.membreService.afficherTousMembres().subscribe(
         data =>{
           this.membresApp = data
+        },
+        error => {
+          console.log(error.status);
+          
+          if (error.status == 401)
+            Swal.fire(
+              'Attention',
+              'Vous n\'avez pas une autorisation',
+              'error'
+            )
         }
       )
     }
@@ -120,7 +130,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.roleService.setRoles(data)
           this.listeRole = this.roleService.getRoles()
         }
-      )
+      ),
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
+      }
 
   }
 
@@ -274,6 +294,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
         console.log(data);
         this.listeRole.splice(this.listeRole.indexOf(role),1)
         this.toastr.success("vous avez accepté l'invitation")
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
   }
@@ -303,6 +333,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 'warning'
               ) 
               this.listeRole.splice(this.listeRole.indexOf(role),1)
+            },
+            error => {
+              console.log(error.status);
+              
+              if (error.status == 401)
+                Swal.fire(
+                  'Attention',
+                  'Vous n\'avez pas une autorisation',
+                  'error'
+                )
             }
           )  
       }
@@ -345,7 +385,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       focusConfirm: false
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.clear()
+        sessionStorage.clear()
         this.router.navigateByUrl('/auth')
       }
     })

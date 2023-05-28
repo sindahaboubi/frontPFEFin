@@ -138,6 +138,16 @@ export class SprintDialogPanelComponent implements OnInit{
       data=>{
         console.log(data);
         this.ticketTacheList = data ;
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
       }
     )
   }
@@ -433,6 +443,16 @@ export class SprintDialogPanelComponent implements OnInit{
           data =>{
             console.log(data)
             this.dialogRef.close()
+          },
+          error => {
+            console.log(error.status);
+            
+            if (error.status == 401)
+              Swal.fire(
+                'Attention',
+                'Vous n\'avez pas une autorisation',
+                'error'
+              )
           }
         )
         Swal.fire(

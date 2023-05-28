@@ -201,7 +201,7 @@ removeUserStoryFromProductBacklog(id: number) {
 
   //sprint details
   openDialogDetailsSprint(i:number,sp:Sprint) {
-    if(this.role=='dev team' || this.role=='po'){
+    if(this.role=='dev team' || this.role=='po' || this.role=='chefProjet'){
       let test = this.checkStartOneSprint()
       this.histoireTicketService.getHistoireTicketBySprintId(sp.id).subscribe(
         data =>{
@@ -396,6 +396,16 @@ removeUserStoryFromProductBacklog(id: number) {
             this.sprintsVelocitySum += sprint.velocite;
           });
           console.log("Somme de vélocité des sprints: " + this.sprintsVelocitySum);
+        },
+        error => {
+          console.log(error.status);
+          
+          if (error.status == 401)
+            Swal.fire(
+              'Attention',
+              'Vous n\'avez pas une autorisation',
+              'error'
+            )
         }
       );
 
@@ -454,8 +464,15 @@ removeUserStoryFromProductBacklog(id: number) {
     sprint.dateFin= new Date(sprint.dateFin)    
     return  sprint.dateFin.getFullYear() === aujourdhui.getFullYear() &&
     sprint.dateFin.getMonth() === aujourdhui.getMonth() &&
-    sprint.dateFin.getDate() === aujourdhui.getDate()&&
-    aujourdhui.getHours()<23
+    sprint.dateFin.getDate() === aujourdhui.getDate()
+    
+  }
+  verifDateDebut(sprint:Sprint){
+    const aujourdhui = new Date()
+    sprint.dateLancement= new Date(sprint.dateLancement)    
+    return  sprint.dateLancement.getFullYear() === aujourdhui.getFullYear() &&
+    sprint.dateLancement.getMonth() === aujourdhui.getMonth() &&
+    sprint.dateLancement.getDate() === aujourdhui.getDate()
   }
 
   }

@@ -79,52 +79,64 @@ export class HistoireMembreChartComponent implements OnInit   {
     ([roles,tickets])=>{
       //recuoerer les membre par role
       const membres:Membre[] = []
-      let tableHistoire = []
+      let tableHistoire:TacheTicket[] = []
       this.taches = tickets
       const tableHistoireId = Array.from(new Set(tickets.map((ticket) => ticket.ht.id)));
+      console.log("tab: ",tableHistoireId);
+      
       for(let tabId of tableHistoireId)
-       tableHistoire.push(tickets.find(ticket=>ticket.ht.id == tabId))
+       tableHistoire.push(tickets.find(ticket=>ticket.ticketHistoireId == tabId))
       console.log(tableHistoire);
       this.listTicketHistoire = tableHistoire
       this.generateColors(roles.length);
       for(let role of roles){
-        if(role.status == "ACCEPTE")
+        if(role.status == "ACCEPTE" && role.type=="dev team")
           membres.push(role.membre)
       }
         this.listMembre = membres
         console.log(membres);
         const bubbleChartData = [];
         for(let i =0;i<membres.length;i++){
-          const  memberData = { data: [], label: membres[i].email, backgroundColor: this.colors[i], borderColor: this.colors[i] };
+          let memberData
+          console.log(tableHistoire);
+          
+          const travailTache = tableHistoire.find(tache=> tache.membreId == membres[i].id )
+          if(travailTache){
+          memberData = { data: [], label: membres[i].email, backgroundColor: this.colors[i], borderColor: this.colors[i] };
+          }
+          else
+            continue
           for(let ticketTache of tickets){
             if(memberData.data.find(axe => axe.y == ticketTache.ht.id) ){
               continue
-            }else{
+            }else if(ticketTache.membreId == membres[i].id){
               memberData.data.push({ x: i, y: ticketTache.ht.id,r:5});
             }
 
           }
           bubbleChartData.push(memberData);
         }
-      
+     
+      const maxIdHistoire = Math.max(...tableHistoireId)
+      let minIdHistoire = Math.min(...tableHistoireId)
+      if(tableHistoire.length <=1)
+        minIdHistoire-=1
       //conf
       const chartOptions = {
         scales: {
           yAxes: [{
-            min:0,
-            max:tableHistoire.length,
             scaleLabel: {
-            
+              display: true,
               labelString: 'Histoire de ticket'
             },
-
             ticks: {
-              autoSkip:true,
+              stepSize: 1 ,
               beginAtZero: false,
-              stepsSize:1,
-              maxTicksLimit:tableHistoire.length, 
-              callback :(value, index, values) => {
-                return   tableHistoire[index].ht.titre
+              min: minIdHistoire, // La première valeur sera 0
+              max:maxIdHistoire,
+              maxTicksLimit:tableHistoire.length , 
+              callback :(value, index, values) => { // Personnalisation des labels
+                return tableHistoire.find(tache => tache.ticketHistoireId == value)?.ht.titre;
               }
             },
             gridLines: { 
@@ -136,7 +148,6 @@ export class HistoireMembreChartComponent implements OnInit   {
              }
           }],
           xAxes: [{
-            
             scaleLabel: {
               display: true,
               labelString: 'Membre'

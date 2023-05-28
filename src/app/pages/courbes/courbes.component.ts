@@ -11,6 +11,7 @@ import { SprintService } from 'src/app/service/sprint.service';
 import { TicketTacheService } from 'src/app/service/ticket-tache.service';
 import { Chart } from 'chart.js';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-courbes',
@@ -37,7 +38,19 @@ export class CourbesComponent implements OnInit {
         this.sprints = data;
         console.log(this.sprints);
         this.afficherDiagramme();
-      });
+      },
+      error => {
+        console.log(error.status);
+        
+        if (error.status == 401)
+          Swal.fire(
+            'Attention',
+            'Vous n\'avez pas une autorisation',
+            'error'
+          )
+      }
+      
+      );
   }
 
   afficherDiagramme() {

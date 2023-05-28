@@ -82,7 +82,14 @@ export class InputChatComponent implements OnInit {
         },
         errors=>{
           this.toastr.error(`vous avez déjà envoyer une question paraille`);
-        }
+            if (errors.status == 401)
+              Swal.fire(
+                'Attention',
+                'Vous n\'avez pas une autorisation',
+                'error'
+              )
+          }
+        
       )
     }else{
       console.log("error");

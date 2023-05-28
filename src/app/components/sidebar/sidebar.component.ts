@@ -90,20 +90,7 @@ export class SidebarComponent implements OnInit {
 
   sprintLancee:number
   ngOnInit() {
-    this.sprintService.getListSprintsByProductBacklog(JSON.parse(localStorage.getItem('productBacklogCourant')).id)
-    .subscribe(
-      data => {
-        this.sprintLancee = data.filter(sprint => sprint.etat == "en cours")?.length
-        this.menuItems = ROUTES.map((menuItem) =>
-        menuItem.path === "/sprint-backlog"
-          ? {
-              ...menuItem,
-              disabled: this.sprintLancee == 0,
-            }
-          : menuItem
-      );
-      }
-    )
+   
    this.menuItems = ROUTES.filter(menuItem => menuItem);
   }
 

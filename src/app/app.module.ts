@@ -65,6 +65,7 @@ import { SelectProjetMembreComponent } from './pages/select-projet-membre/select
 // import { CalendarModule } from 'angular-calendar';
 import { ChooseTypeDialogComponent } from './pages/dialogs/choose-type-dialog/choose-type-dialog.component'; // Import du module CalendarModule
 import { AuthInterceptor } from "./interceptors/auth.interceptor";
+import { CsrfInterceptor } from "./interceptors/csrf.interceptor";
 
 
 @NgModule({
@@ -120,6 +121,11 @@ import { AuthInterceptor } from "./interceptors/auth.interceptor";
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CsrfInterceptor,
       multi: true
     }
   ],
